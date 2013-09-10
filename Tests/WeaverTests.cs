@@ -15,8 +15,8 @@ namespace Tests {
             assemblyPath = assemblyPath.Replace("Debug", "Release");
 #endif
             var moduleDefinition = ModuleDefinition.ReadModule(assemblyPath);
+            moduleDefinition.Assembly.MainModule.ReadSymbols();
             var moduleWeaver = new ModuleWeaver { ModuleDefinition = moduleDefinition };
-            //moduleWeaver.ModuleDefinition.ReadSymbols();
             moduleWeaver.Execute();
             moduleWeaver.ModuleDefinition.Write(assemblyPath);
         }

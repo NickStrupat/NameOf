@@ -29,9 +29,28 @@ namespace NameOf.Fody
         }
         private static void ProcessNameOfCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             ProcessNameOfTypeCallInstruction(instruction, ilProcessor);
+            ProcessNameOfLocalCallInstruction(instruction, ilProcessor);
         }
         private static void ProcessNameOfTypeCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             
+        }
+        private static void ProcessNameOfLocalCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+            String name;
+            if (new[] { OpCodes.Ldloc, OpCodes.Ldloc_S, OpCodes.Ldloca, OpCodes.Ldloca_S }.Contains(instruction.Previous.OpCode))
+                name = ((VariableReference)instruction.Previous.Operand).Name;
+            else if (instruction.Previous.OpCode == OpCodes.Ldloc_0)
+                name = ilProcessor.Body.Variables[0].Name;
+            else if (instruction.Previous.OpCode == OpCodes.Ldloc_1)
+                name = ilProcessor.Body.Variables[1].Name;
+            else if (instruction.Previous.OpCode == OpCodes.Ldloc_2)
+                name = ilProcessor.Body.Variables[2].Name;
+            else if (instruction.Previous.OpCode == OpCodes.Ldloc_3)
+                name = ilProcessor.Body.Variables[3].Name;
+            else
+                throw new InvalidOperationException("No valid opcode found.");
+            ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
+            ilProcessor.Remove(instruction.Previous);
+            ilProcessor.Remove(instruction);
         }
     }
 }
