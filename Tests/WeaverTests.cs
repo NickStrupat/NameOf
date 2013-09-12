@@ -9,7 +9,7 @@ namespace Tests {
     [TestClass]
     public class WeaverTests {
         [TestMethod]
-        public void Setup() {
+        public void ActualWeaving() {
             var projectPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\AssemblyToProcess\AssemblyToProcess.csproj"));
             var assemblyPath = Path.Combine(Path.GetDirectoryName(projectPath), @"bin\Debug\AssemblyToProcess.dll");
 #if (!DEBUG)
@@ -25,6 +25,22 @@ namespace Tests {
         [TestMethod]
         public void Locals() {
             Invocations.Local();
+        }
+        [TestMethod]
+        public void Types() {
+            Invocations.Type();
+        }
+        [TestMethod]
+        public void Statics() {
+            Invocations.Static();
+        }
+        [TestMethod]
+        public void StaticInstances() {
+            Invocations.StaticInstance();
+        }
+        [TestMethod]
+        public void Instances() {
+            Invocations.Instance();
         }
     }
 }

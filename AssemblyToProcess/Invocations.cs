@@ -3,32 +3,25 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AssemblyToProcess {
     public static class Invocations {
-        public static void All() {
-            Local();
-            Type();
-            Static();
-            StaticInstance();
-            Instance();
-        }
         public static void Local() {
             var anonymousType = new { property = true };
-            Assert.AreEqual("anonymousType", Name.Of(anonymousType));
+            Assert.AreEqual(Name.Of(anonymousType), "anonymousType");
             Nullable<Single> nullableType = 42.0f;
-            Assert.AreEqual("nullableType", Name.Of(nullableType));
+            Assert.AreEqual(Name.Of(nullableType), "nullableType");
             Boolean systemValueType = true;
-            Assert.AreEqual("systemValueType", Name.Of(systemValueType));
+            Assert.AreEqual(Name.Of(systemValueType), "systemValueType");
             String systemReferenceType = "foo";
-            Assert.AreEqual("systemReferenceType", Name.Of(systemReferenceType));
+            Assert.AreEqual(Name.Of(systemReferenceType), "systemReferenceType");
             Abc valueType = new Abc();
-            Assert.AreEqual("valueType", Name.Of(valueType));
+            Assert.AreEqual(Name.Of(valueType), "valueType");
             Def referenceType = new Def();
-            Assert.AreEqual("referenceType", Name.Of(referenceType));
+            Assert.AreEqual(Name.Of(referenceType), "referenceType");
             Func<Int32> valueTypeDelegate = () => 1337;
-            Assert.AreEqual("valueTypeDelegate", Name.Of(valueTypeDelegate));
+            Assert.AreEqual(Name.Of(valueTypeDelegate), "valueTypeDelegate");
             Func<Object> referenceTypeDelegate = () => new Object();
-            Assert.AreEqual("referenceTypeDelegate", Name.Of(referenceTypeDelegate));
+            Assert.AreEqual(Name.Of(referenceTypeDelegate), "referenceTypeDelegate");
             Action referenceTypeDelegate2 = () => { };
-            Assert.AreEqual("referenceTypeDelegate2", Name.Of(referenceTypeDelegate2));
+            Assert.AreEqual(Name.Of(referenceTypeDelegate2), "referenceTypeDelegate2");
         }
         public static void Type() {
             Assert.AreEqual(Name.Of<Values>(), typeof(Values).Name);
