@@ -130,7 +130,7 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassDelegateMethod), "InstanceClassDelegateMethod");
             Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidMethod), "InstanceClassVoidMethod");
             Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
-            Assert.AreEqual(Name.OfEvent(() => instanceClass.InstanceClassEvent += (o, e) => { }), "InstanceClassEvent");
+            Assert.AreEqual(Name.OfEvent(e => instanceClass.InstanceClassEvent += e), "InstanceClassEvent");
         }
         private static void AssertFail() {
             Assert.Fail("This use is not supported");
