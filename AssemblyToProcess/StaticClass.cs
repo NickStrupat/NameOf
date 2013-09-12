@@ -24,7 +24,7 @@ namespace AssemblyToProcess {
         public static Abc StaticClassValueTypeMethod() { return new Abc(); }
         public static Def StaticClassReferenceTypeMethod() { return new Def(); }
         public static Abc StaticClassValueTypeGenericMethod<T>() where T : struct { return new Abc(); }
-        public static Def StaticClassReferenceTypeGenericMethod<T>() { return new Def(); }
+        public static Def StaticClassReferenceTypeGenericMethod<T, U, V, W>() where T : class { return new Def(); }
         public static Func<Int32> StaticClassValueTypeDelegateMethod() { return () => 4567; }
         public static Func<Object> StaticClassReferenceTypeDelegateMethod() { return () => new Byte[5]; }
         public static Action StaticClassDelegateMethod() { return () => { }; }
