@@ -38,6 +38,15 @@
     <Reference Include="Mono.Cecil">
       <HintPath>..\Lib\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\Lib\Cecil\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\Lib\Cecil\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\Lib\Cecil\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -57,6 +66,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj">
+      <Project>{664a2523-4b7e-448e-9926-138194c33f1e}</Project>
+      <Name>AssemblyToProcess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NameOf.Fody\NameOf.Fody.csproj">
       <Project>{E8D5D863-5476-4182-9F31-68CD58996A4B}</Project>
       <Name>NameOf.Fody</Name>
