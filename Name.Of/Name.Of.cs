@@ -1,5 +1,7 @@
 ﻿using System;
 
+public struct V {}
+public class R {}
 public static class Name {
     private static NotImplementedException GetNotImplementedException() { return new NotImplementedException("This is just a stub to be removed when processed by Fody."); }
     #region Static access
@@ -46,5 +48,6 @@ public static class Name {
     public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
     public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
     public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
+    public static String OfEvent(Action @event) { throw GetNotImplementedException(); } 
     #endregion
 }

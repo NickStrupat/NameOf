@@ -9,6 +9,7 @@ namespace NameOf.Fody
 {
     public class ModuleWeaver
     {
+        public class NoValidOpCodeFoundException : Exception {}
         public ModuleDefinition ModuleDefinition { get; set; }
         public void Execute() {
             foreach (var typeDefinition in ModuleDefinition.GetTypes())
@@ -35,22 +36,29 @@ namespace NameOf.Fody
             
         }
         private static void ProcessNameOfLocalCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
-            String name;
-            if (new[] { OpCodes.Ldloc, OpCodes.Ldloc_S, OpCodes.Ldloca, OpCodes.Ldloca_S }.Contains(instruction.Previous.OpCode))
-                name = ((VariableReference)instruction.Previous.Operand).Name;
-            else if (instruction.Previous.OpCode == OpCodes.Ldloc_0)
-                name = ilProcessor.Body.Variables[0].Name;
-            else if (instruction.Previous.OpCode == OpCodes.Ldloc_1)
-                name = ilProcessor.Body.Variables[1].Name;
-            else if (instruction.Previous.OpCode == OpCodes.Ldloc_2)
-                name = ilProcessor.Body.Variables[2].Name;
-            else if (instruction.Previous.OpCode == OpCodes.Ldloc_3)
-                name = ilProcessor.Body.Variables[3].Name;
-            else
-                throw new InvalidOperationException("No valid opcode found.");
-            ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
-            ilProcessor.Remove(instruction.Previous);
-            ilProcessor.Remove(instruction);
+            try {
+                String name;
+                if (new[] { OpCodes.Ldloc, OpCodes.Ldloc_S, OpCodes.Ldloca, OpCodes.Ldloca_S }.Contains(instruction.Previous.OpCode))
+                    name = ((VariableReference)instruction.Previous.Operand).Name;
+                else if (instruction.Previous.OpCode == OpCodes.Ldloc_0)
+                    name = ilProcessor.Body.Variables[0].Name;
+                else if (instruction.Previous.OpCode == OpCodes.Ldloc_1)
+                    name = ilProcessor.Body.Variables[1].Name;
+                else if (instruction.Previous.OpCode == OpCodes.Ldloc_2)
+                    name = ilProcessor.Body.Variables[2].Name;
+                else if (instruction.Previous.OpCode == OpCodes.Ldloc_3)
+                    name = ilProcessor.Body.Variables[3].Name;
+                else
+                    throw new NoValidOpCodeFoundException();
+                if (instruction.Previous.OpCode == OpCodes.Box) {
+                    
+                }
+                ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
+                ilProcessor.Remove(instruction.Previous);
+                ilProcessor.Remove(instruction);
+            }
+            catch (NoValidOpCodeFoundException exception) {
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using AssemblyToProcess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Cecil;
 using NameOf.Fody;
@@ -14,11 +15,16 @@ namespace Tests {
 #if (!DEBUG)
             assemblyPath = assemblyPath.Replace("Debug", "Release");
 #endif
+            //File.Copy(assemblyPath, assemblyPath = assemblyPath.Replace(".dll", ".weaved.dll"), overwrite: true);
             var moduleDefinition = ModuleDefinition.ReadModule(assemblyPath);
             moduleDefinition.Assembly.MainModule.ReadSymbols();
             var moduleWeaver = new ModuleWeaver { ModuleDefinition = moduleDefinition };
             moduleWeaver.Execute();
             moduleWeaver.ModuleDefinition.Write(assemblyPath);
+        }
+        [TestMethod]
+        public void Locals() {
+            Invocations.Local();
         }
     }
 }
