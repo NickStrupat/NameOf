@@ -15,12 +15,15 @@ namespace Tests {
 #if (!DEBUG)
             assemblyPath = assemblyPath.Replace("Debug", "Release");
 #endif
-            //File.Copy(assemblyPath, assemblyPath = assemblyPath.Replace(".dll", ".weaved.dll"), overwrite: true);
             var moduleDefinition = ModuleDefinition.ReadModule(assemblyPath);
             moduleDefinition.Assembly.MainModule.ReadSymbols();
             var moduleWeaver = new ModuleWeaver { ModuleDefinition = moduleDefinition };
             moduleWeaver.Execute();
-            moduleWeaver.ModuleDefinition.Write(assemblyPath);
+            moduleWeaver.ModuleDefinition.Write(assemblyPath.Replace(".dll", ".weaved.dll"));
+        }
+        [TestMethod]
+        public void Arguments() {
+            Invocations.Arguments();
         }
         [TestMethod]
         public void Locals() {
@@ -41,6 +44,10 @@ namespace Tests {
         [TestMethod]
         public void Instances() {
             Invocations.Instance();
+        }
+        [TestMethod]
+        public void Errors() {
+            Invocations.Errors();
         }
     }
 }

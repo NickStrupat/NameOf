@@ -1,8 +1,18 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AssemblyToProcess {
     public static class Invocations {
+        public static void Arguments() {
+            PrivateArguments(null, 42, new[] {true, false});
+        }
+        private static void PrivateArguments(Object @object, Int32 integer, IEnumerable<Boolean> booleans) {
+            Assert.AreEqual(Name.Of(@object), "object");
+            Assert.AreEqual(Name.Of(integer), "integer");
+            Assert.AreEqual(Name.Of(booleans), "booleans");
+        }
         public static void Local() {
             var anonymousType = new { property = true };
             Assert.AreEqual(Name.Of(anonymousType), "anonymousType");
@@ -121,6 +131,13 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidMethod), "InstanceClassVoidMethod");
             Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
             Assert.AreEqual(Name.OfEvent(() => instanceClass.InstanceClassEvent += (o, e) => { }), "InstanceClassEvent");
+        }
+        public static void Errors() {
+            try {
+                Name.Of(() => false);
+                Assert.Fail("This use is not supported");
+            }
+            catch (NotSupportedException) {}
         }
     }
 }
