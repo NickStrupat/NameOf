@@ -214,7 +214,7 @@ namespace NameOf.Fody {
                 name = name.Substring(removePrefix.Length);
             else
                 throw new NotSupportedException();
-            // Remove method using ilProcessor.Body.Method.DeclaringType.Methods.
+            // TODO: Remove anonymous method using ilProcessor.Body.Method.DeclaringType.Methods.
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             hold = instruction;
             for (var i = 0; i != instructionPattern.Count() + 1; ++i) {
@@ -242,7 +242,7 @@ namespace NameOf.Fody {
                 name = name.Substring(removePrefix.Length);
             else
                 throw new NotSupportedException();
-            // Remove method using ilProcessor.Body.Method.DeclaringType.Methods.
+            // TODO: Remove anonymous method using ilProcessor.Body.Method.DeclaringType.Methods.
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             ilProcessor.Remove(instruction.Previous.Previous.Previous);
             ilProcessor.Remove(instruction.Previous.Previous);

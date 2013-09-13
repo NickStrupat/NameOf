@@ -10,44 +10,12 @@ public static class Name {
     public static String OfProperty<T>(Func<T, Object> property) { throw GetNotImplementedException(); }
     public static String OfMethod<T, TResult>(Func<T, Func<TResult>> method) { throw GetNotImplementedException(); }
     public static String OfVoidMethod<T>(Func<T, Action> voidMethod) { throw GetNotImplementedException(); }
-    public static String OfEvent<T>(Action<T, EventHandler> @event) { throw GetNotImplementedException(); }
     #endregion
     #region Instance access
     public static String Of(Object expression) { throw GetNotImplementedException(); }
     public static String Of<TResult>(Func<TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, TResult> expression) { throw GetNotImplementedException(); }
     public static String OfVoidMethod(Action expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> expression) { throw GetNotImplementedException(); }
-    public static String OfEvent(Action<EventHandler> @event) { throw GetNotImplementedException(); } 
     #endregion
+    public static String OfEvent(Action<EventHandler> @event) { throw GetNotImplementedException(); } 
+    public static String OfEvent<T>(Action<T, EventHandler> @event) { throw GetNotImplementedException(); }
 }
