@@ -205,15 +205,9 @@ namespace NameOf.Fody {
                     return false;
             }
             var anonymousMethod = (MethodDefinition)instruction.Previous.Previous.Previous.Previous.Previous.Operand;
-            String name = ((MethodReference)anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand).Name;
-            const String addPrefix = "add_";
-            const String removePrefix = "remove_";
-            if (name.StartsWith(addPrefix))
-                name = name.Substring(addPrefix.Length);
-            else if (name.StartsWith(removePrefix))
-                name = name.Substring(removePrefix.Length);
-            else
-                throw new NotSupportedException();
+            var loadEventFieldInstruction = ((MethodReference) anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand);
+            String name = loadEventFieldInstruction.Name;
+            RemoveEventFieldPrefixes(ref name);
             // TODO: Remove anonymous method using ilProcessor.Body.Method.DeclaringType.Methods.
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             hold = instruction;
@@ -234,14 +228,7 @@ namespace NameOf.Fody {
                 return false;
             var anonymousMethod = (MethodDefinition)instruction.Previous.Previous.Operand;
             String name = ((MethodReference)anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand).Name;
-            const String addPrefix = "add_";
-            const String removePrefix = "remove_";
-            if (name.StartsWith(addPrefix))
-                name = name.Substring(addPrefix.Length);
-            else if (name.StartsWith(removePrefix))
-                name = name.Substring(removePrefix.Length);
-            else
-                throw new NotSupportedException();
+            RemoveEventFieldPrefixes(ref name);
             // TODO: Remove anonymous method using ilProcessor.Body.Method.DeclaringType.Methods.
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             ilProcessor.Remove(instruction.Previous.Previous.Previous);
@@ -249,6 +236,16 @@ namespace NameOf.Fody {
             ilProcessor.Remove(instruction.Previous);
             ilProcessor.Remove(instruction);
             return true;
+        }
+        private static void RemoveEventFieldPrefixes(ref String fieldName) {
+            const String addPrefix = "add_";
+            const String removePrefix = "remove_";
+            if (fieldName.StartsWith(addPrefix))
+                fieldName = fieldName.Substring(addPrefix.Length);
+            else if (fieldName.StartsWith(removePrefix))
+                fieldName = fieldName.Substring(removePrefix.Length);
+            else
+                throw new NotSupportedException();
         }
     }
 }
