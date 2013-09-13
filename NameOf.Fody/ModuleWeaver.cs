@@ -30,11 +30,14 @@ namespace NameOf.Fody {
         private delegate Boolean NameOfCallInstructionProcessor(Instruction instruction, ILProcessor ilProcessor);
         private static void ProcessNameOfCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             var processNameOfCallInstructionDelegates = new NameOfCallInstructionProcessor[] {
+                                                                  ProcessNameOfStaticEventCallInstruction,
+                                                                  ProcessNameOfInstanceEventCallInstruction,
                                                                   ProcessNameOfTypeCallInstruction,
                                                                   ProcessNameOfArgumentCallInstruction,
                                                                   ProcessNameOfLocalCallInstruction,
                                                                   ProcessNameOfFieldCallInstruction,
-                                                                  ProcessNameOfMethodOrPropertyCallInstruction
+                                                                  ProcessNameOfPropertyCallInstruction,
+                                                                  ProcessNameOfMethodCallInstruction,
                                                               };
             Exception innerException;
             try {
@@ -53,6 +56,7 @@ namespace NameOf.Fody {
             String exceptionMessage = String.Format("This usage of '{0}.{1}' is not supported. Source: {2} - line {3}", NameOfMethodInfo.DeclaringType, NameOfMethodInfo.Name, i.SequencePoint.Document.Url, i.SequencePoint.StartLine);
             throw new NotSupportedException(exceptionMessage, innerException);
         }
+        private static readonly OpCode[] CallOpCodes = {OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt};
         private static readonly MethodInfo GetTypeFromHandleMethodInfo = new Func<RuntimeTypeHandle, Object>(Type.GetTypeFromHandle).Method;
         private static readonly String GetTypeFromHandleMethodSignature = String.Format("{0} {1}::{2}(", GetTypeFromHandleMethodInfo.ReturnType, GetTypeFromHandleMethodInfo.DeclaringType, GetTypeFromHandleMethodInfo.Name);
         private static Boolean ProcessNameOfTypeCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
@@ -146,20 +150,102 @@ namespace NameOf.Fody {
             ilProcessor.Remove(instruction);
             return true;
         }
-        private static Boolean ProcessNameOfMethodOrPropertyCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+        private static Boolean ProcessNameOfPropertyCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             if (instruction.Previous == null)
                 return false;
             var isBoxed = instruction.Previous.OpCode == OpCodes.Box;
             var potentialLoadLocalInstruction = isBoxed ? instruction.Previous.Previous : instruction.Previous;
-            if (!new[] { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt }.Contains(potentialLoadLocalInstruction.OpCode))
+            if (!CallOpCodes.Contains(potentialLoadLocalInstruction.OpCode))
                 return false;
             var methodReference = (MethodDefinition)potentialLoadLocalInstruction.Operand;
-            String name = methodReference.Name;
-            if (methodReference.IsGetter)
-                name = name.Substring(4); // remove leading "get_"
+            if (!methodReference.IsGetter)
+                return false;
+            String name = methodReference.Name.Substring(4); // remove leading "get_"
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             if (isBoxed)
                 ilProcessor.Remove(instruction.Previous.Previous);
+            ilProcessor.Remove(instruction.Previous);
+            ilProcessor.Remove(instruction);
+            return true;
+        }
+        private static Boolean ProcessNameOfMethodCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+            if (instruction.Previous == null || instruction.Previous.Previous == null || instruction.Previous.Previous.Previous == null)
+                return false;
+            if (instruction.Previous.OpCode != OpCodes.Newobj || instruction.Previous.Previous.OpCode != OpCodes.Ldftn || instruction.Previous.Previous.Previous.OpCode != OpCodes.Ldnull)
+                return false;
+            var methodDefinition = (MethodReference) instruction.Previous.Previous.Operand;
+            String name = methodDefinition.Name;
+            ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
+            ilProcessor.Remove(instruction.Previous.Previous.Previous);
+            ilProcessor.Remove(instruction.Previous.Previous);
+            ilProcessor.Remove(instruction.Previous);
+            ilProcessor.Remove(instruction);
+            return true;
+        }
+        private static readonly MethodInfo NameOfEventMethodInfo = new Func<Action<Object, EventHandler>, String>(Name.OfEvent).Method;
+        private static readonly String NameOfEventMethodSignature = String.Format("{0} {1}::{2}", NameOfEventMethodInfo.ReturnType, NameOfEventMethodInfo.DeclaringType, NameOfEventMethodInfo.Name);
+        private static Boolean ProcessNameOfStaticEventCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+            if (!((MethodReference) instruction.Operand).FullName.StartsWith(NameOfEventMethodSignature))
+                return false;
+            var instructionPattern = new[] {
+                                               OpCodes.Ldsfld,
+                                               OpCodes.Brtrue_S,
+                                               OpCodes.Ldnull,
+                                               OpCodes.Ldftn,
+                                               OpCodes.Newobj,
+                                               OpCodes.Stsfld,
+                                               OpCodes.Br_S,
+                                               OpCodes.Ldsfld
+                                           };
+            Instruction hold = instruction;
+            for (var i = 0; i != instructionPattern.Count(); ++i) {
+                if ((hold = hold.Previous) == null)
+                    return false;
+                if (hold.OpCode != instructionPattern.Reverse().ElementAt(i))
+                    return false;
+            }
+            var anonymousMethod = (MethodDefinition)instruction.Previous.Previous.Previous.Previous.Previous.Operand;
+            String name = ((MethodReference)anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand).Name;
+            const String addPrefix = "add_";
+            const String removePrefix = "remove_";
+            if (name.StartsWith(addPrefix))
+                name = name.Substring(addPrefix.Length);
+            else if (name.StartsWith(removePrefix))
+                name = name.Substring(removePrefix.Length);
+            else
+                throw new NotSupportedException();
+            // Remove method using ilProcessor.Body.Method.DeclaringType.Methods.
+            ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
+            hold = instruction;
+            for (var i = 0; i != instructionPattern.Count() + 1; ++i) {
+                var temp = hold.Previous;
+                ilProcessor.Remove(hold);
+                hold = temp;
+            }
+            return true;
+        }
+        private static readonly OpCode[] LdlocOpCodes = { OpCodes.Ldloc, OpCodes.Ldloca, OpCodes.Ldloca_S, OpCodes.Ldloca_S, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3 };
+        private static Boolean ProcessNameOfInstanceEventCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+            if (!((MethodReference)instruction.Operand).FullName.StartsWith(NameOfEventMethodSignature))
+                return false;
+            if (instruction.Previous == null || instruction.Previous.Previous == null || instruction.Previous.Previous.Previous == null)
+                return false;
+            if (instruction.Previous.OpCode != OpCodes.Newobj || instruction.Previous.Previous.OpCode != OpCodes.Ldftn || !LdlocOpCodes.Contains(instruction.Previous.Previous.Previous.OpCode))
+                return false;
+            var anonymousMethod = (MethodDefinition)instruction.Previous.Previous.Operand;
+            String name = ((MethodReference)anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand).Name;
+            const String addPrefix = "add_";
+            const String removePrefix = "remove_";
+            if (name.StartsWith(addPrefix))
+                name = name.Substring(addPrefix.Length);
+            else if (name.StartsWith(removePrefix))
+                name = name.Substring(removePrefix.Length);
+            else
+                throw new NotSupportedException();
+            // Remove method using ilProcessor.Body.Method.DeclaringType.Methods.
+            ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
+            ilProcessor.Remove(instruction.Previous.Previous.Previous);
+            ilProcessor.Remove(instruction.Previous.Previous);
             ilProcessor.Remove(instruction.Previous);
             ilProcessor.Remove(instruction);
             return true;
