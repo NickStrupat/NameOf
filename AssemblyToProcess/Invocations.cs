@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AssemblyToProcess {
     public static class Invocations {
+        private static void VoidMethod() {}
+        private static Object Method() { return null; }
         public static void Arguments() {
             PrivateArguments(null, 42, new[] {true, false});
         }
@@ -12,6 +14,10 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(@object), "object");
             Assert.AreEqual(Name.Of(integer), "integer");
             Assert.AreEqual(Name.Of(booleans), "booleans");
+        }
+        public static void Member() {
+            Assert.AreEqual(Name.Of(Method), "Method");
+            Assert.AreEqual(Name.OfVoidMethod(VoidMethod), "VoidMethod");
         }
         public static void Local() {
             var anonymousType = new { property = true };
@@ -39,7 +45,7 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of<InstanceClass>(), typeof(InstanceClass).Name);
         }
         public static void Static() {
-            Assert.AreEqual(Name.Of(StaticClass.StaticClassNullableTypeField), "StaticClassNullableTypeField");
+            Assert.AreEqual(Name.Of(StaticClass.StaticClassNullableTypeField), "StaticClassNullableTypeField"); 
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemValueTypeField), "StaticClassSystemValueTypeField");
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemReferenceTypeField), "StaticClassSystemReferenceTypeField");
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeField), "StaticClassValueTypeField");

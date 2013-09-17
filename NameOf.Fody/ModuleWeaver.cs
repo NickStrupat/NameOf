@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -30,20 +28,22 @@ namespace NameOf.Fody {
         private delegate Boolean NameOfCallInstructionProcessor(Instruction instruction, ILProcessor ilProcessor);
         private static void ProcessNameOfCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             var processNameOfCallInstructionDelegates = new NameOfCallInstructionProcessor[] {
-                                                                  ProcessNameOfStaticEventCallInstruction,
-                                                                  ProcessNameOfInstanceEventCallInstruction,
-                                                                  ProcessNameOfTypeCallInstruction,
-                                                                  ProcessNameOfArgumentCallInstruction,
-                                                                  ProcessNameOfLocalCallInstruction,
-                                                                  ProcessNameOfFieldCallInstruction,
-                                                                  ProcessNameOfPropertyCallInstruction,
-                                                                  ProcessNameOfMethodCallInstruction,
-                                                              };
+                                                                                                 ProcessStaticNameOfEventCallInstruction,
+                                                                                                 ProcessInstanceNameOfEventCallInstruction,
+                                                                                                 ProcessStaticNameOfFieldCallInstruction,
+                                                                                                 ProcessNameOfTypeCallInstruction,
+                                                                                                 ProcessNameOfArgumentCallInstruction,
+                                                                                                 ProcessNameOfLocalCallInstruction,
+                                                                                                 ProcessNameOfFieldCallInstruction,
+                                                                                                 ProcessNameOfPropertyCallInstruction,
+                                                                                                 ProcessStaticNameOfStaticMethodCallInstruction,
+                                                                                             };
             Exception innerException;
             try {
-                foreach (var processNameOfCallInstructionDelegate in processNameOfCallInstructionDelegates)
+                foreach (var processNameOfCallInstructionDelegate in processNameOfCallInstructionDelegates) {
                     if (processNameOfCallInstructionDelegate(instruction, ilProcessor))
                         return;
+                }
                 return; // TODO: Remove this so the exception works!
             }
             catch (NotSupportedException notSupportedException) {
@@ -53,9 +53,14 @@ namespace NameOf.Fody {
             var i = instruction;
             while (i.SequencePoint == null) // Look for last sequence point
                 i = i.Previous;
-            String exceptionMessage = String.Format("This usage of '{0}.{1}' is not supported. Source: {2} - line {3}", NameOfMethodInfo.DeclaringType, NameOfMethodInfo.Name, i.SequencePoint.Document.Url, i.SequencePoint.StartLine);
+            String exceptionMessage = String.Format("This usage of '{0}.{1}' is not supported. Source: {2} - line {3}",
+                NameOfMethodInfo.DeclaringType,
+                NameOfMethodInfo.Name,
+                i.SequencePoint.Document.Url,
+                i.SequencePoint.StartLine);
             throw new NotSupportedException(exceptionMessage, innerException);
         }
+        
         private static readonly OpCode[] CallOpCodes = {OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt};
         private static readonly MethodInfo GetTypeFromHandleMethodInfo = new Func<RuntimeTypeHandle, Object>(Type.GetTypeFromHandle).Method;
         private static readonly String GetTypeFromHandleMethodSignature = String.Format("{0} {1}::{2}(", GetTypeFromHandleMethodInfo.ReturnType, GetTypeFromHandleMethodInfo.DeclaringType, GetTypeFromHandleMethodInfo.Name);
@@ -65,7 +70,7 @@ namespace NameOf.Fody {
                 var previous = instruction.Previous;
                 if (previous != null && previous.OpCode == OpCodes.Call && previous.Operand is MethodReference && ((MethodReference) previous.Operand).FullName.StartsWith(GetTypeFromHandleMethodSignature)) {
                     if (previous.Previous != null && previous.Previous.OpCode == OpCodes.Ldtoken) {
-                        String name = ((TypeDefinition)previous.Previous.Operand).Name;
+                        String name = ((TypeDefinition) previous.Previous.Operand).Name;
                         ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
                         ilProcessor.Remove(instruction.Previous.Previous);
                         ilProcessor.Remove(instruction.Previous);
@@ -88,8 +93,8 @@ namespace NameOf.Fody {
             var isBoxed = instruction.Previous.OpCode == OpCodes.Box;
             var potentialLoadLocalInstruction = isBoxed ? instruction.Previous.Previous : instruction.Previous;
             String name;
-            if (new[] { OpCodes.Ldarg, OpCodes.Ldarg_S, OpCodes.Ldarga, OpCodes.Ldarga_S }.Contains(potentialLoadLocalInstruction.OpCode))
-                name = ((ParameterReference)potentialLoadLocalInstruction.Operand).Name;
+            if (new[] {OpCodes.Ldarg, OpCodes.Ldarg_S, OpCodes.Ldarga, OpCodes.Ldarga_S}.Contains(potentialLoadLocalInstruction.OpCode))
+                name = ((ParameterReference) potentialLoadLocalInstruction.Operand).Name;
             else if (potentialLoadLocalInstruction.OpCode == OpCodes.Ldarg_0)
                 name = ilProcessor.Body.Method.Parameters[0].Name;
             else if (potentialLoadLocalInstruction.OpCode == OpCodes.Ldarg_1)
@@ -142,7 +147,7 @@ namespace NameOf.Fody {
             //Boolean isALambdaExpression = ((FieldReference)potentialLoadLocalInstruction.Operand).FieldType.FullName == typeof(Action).FullName;
             //if (isALambdaExpression)
             //    throw new NotSupportedException("Lamdbda expressions are not supported.");
-            String name = ((FieldReference)potentialLoadLocalInstruction.Operand).Name;
+            String name = ((FieldReference) potentialLoadLocalInstruction.Operand).Name;
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             if (isBoxed)
                 ilProcessor.Remove(instruction.Previous.Previous);
@@ -157,7 +162,7 @@ namespace NameOf.Fody {
             var potentialLoadLocalInstruction = isBoxed ? instruction.Previous.Previous : instruction.Previous;
             if (!CallOpCodes.Contains(potentialLoadLocalInstruction.OpCode))
                 return false;
-            var methodReference = (MethodDefinition)potentialLoadLocalInstruction.Operand;
+            var methodReference = (MethodDefinition) potentialLoadLocalInstruction.Operand;
             if (!methodReference.IsGetter)
                 return false;
             String name = methodReference.Name.Substring(4); // remove leading "get_"
@@ -168,7 +173,7 @@ namespace NameOf.Fody {
             ilProcessor.Remove(instruction);
             return true;
         }
-        private static Boolean ProcessNameOfMethodCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+        private static Boolean ProcessStaticNameOfStaticMethodCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             if (instruction.Previous == null || instruction.Previous.Previous == null || instruction.Previous.Previous.Previous == null)
                 return false;
             if (instruction.Previous.OpCode != OpCodes.Newobj || instruction.Previous.Previous.OpCode != OpCodes.Ldftn || instruction.Previous.Previous.Previous.OpCode != OpCodes.Ldnull)
@@ -182,52 +187,53 @@ namespace NameOf.Fody {
             ilProcessor.Remove(instruction);
             return true;
         }
+        private static readonly OpCode[] StaticNameOfLambdaCallInstructionOpCodePattern = {
+                                                                                              OpCodes.Ldsfld,
+                                                                                              OpCodes.Brtrue_S,
+                                                                                              OpCodes.Ldnull,
+                                                                                              OpCodes.Ldftn,
+                                                                                              OpCodes.Newobj,
+                                                                                              OpCodes.Stsfld,
+                                                                                              OpCodes.Br_S,
+                                                                                              OpCodes.Ldsfld
+                                                                                          };
+        
         private static readonly MethodInfo NameOfEventMethodInfo = new Func<Action<Object, EventHandler>, String>(Name.OfEvent).Method;
         private static readonly String NameOfEventMethodSignature = String.Format("{0} {1}::{2}", NameOfEventMethodInfo.ReturnType, NameOfEventMethodInfo.DeclaringType, NameOfEventMethodInfo.Name);
-        private static Boolean ProcessNameOfStaticEventCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+        private static Boolean ProcessStaticNameOfEventCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             if (!((MethodReference) instruction.Operand).FullName.StartsWith(NameOfEventMethodSignature))
                 return false;
-            var instructionPattern = new[] {
-                                               OpCodes.Ldsfld,
-                                               OpCodes.Brtrue_S,
-                                               OpCodes.Ldnull,
-                                               OpCodes.Ldftn,
-                                               OpCodes.Newobj,
-                                               OpCodes.Stsfld,
-                                               OpCodes.Br_S,
-                                               OpCodes.Ldsfld
-                                           };
             Instruction hold = instruction;
-            for (var i = 0; i != instructionPattern.Count(); ++i) {
+            for (var i = 0; i != StaticNameOfLambdaCallInstructionOpCodePattern.Count(); ++i) {
                 if ((hold = hold.Previous) == null)
                     return false;
-                if (hold.OpCode != instructionPattern.Reverse().ElementAt(i))
+                if (hold.OpCode != StaticNameOfLambdaCallInstructionOpCodePattern.Reverse().ElementAt(i))
                     return false;
             }
-            var anonymousMethod = (MethodDefinition)instruction.Previous.Previous.Previous.Previous.Previous.Operand;
+            var anonymousMethod = (MethodDefinition) instruction.Previous.Previous.Previous.Previous.Previous.Operand;
             var loadEventFieldInstruction = ((MethodReference) anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand);
             String name = loadEventFieldInstruction.Name;
             RemoveEventFieldPrefixes(ref name);
             // TODO: Remove anonymous method using ilProcessor.Body.Method.DeclaringType.Methods.
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             hold = instruction;
-            for (var i = 0; i != instructionPattern.Count() + 1; ++i) {
+            for (var i = 0; i != StaticNameOfLambdaCallInstructionOpCodePattern.Count() + 1; ++i) {
                 var temp = hold.Previous;
                 ilProcessor.Remove(hold);
                 hold = temp;
             }
             return true;
         }
-        private static readonly OpCode[] LdlocOpCodes = { OpCodes.Ldloc, OpCodes.Ldloca, OpCodes.Ldloca_S, OpCodes.Ldloca_S, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3 };
-        private static Boolean ProcessNameOfInstanceEventCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
-            if (!((MethodReference)instruction.Operand).FullName.StartsWith(NameOfEventMethodSignature))
+        private static readonly OpCode[] LdlocOpCodes = {OpCodes.Ldloc, OpCodes.Ldloca, OpCodes.Ldloca_S, OpCodes.Ldloca_S, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3};
+        private static Boolean ProcessInstanceNameOfEventCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+            if (!((MethodReference) instruction.Operand).FullName.StartsWith(NameOfEventMethodSignature))
                 return false;
             if (instruction.Previous == null || instruction.Previous.Previous == null || instruction.Previous.Previous.Previous == null)
                 return false;
             if (instruction.Previous.OpCode != OpCodes.Newobj || instruction.Previous.Previous.OpCode != OpCodes.Ldftn || !LdlocOpCodes.Contains(instruction.Previous.Previous.Previous.OpCode))
                 return false;
-            var anonymousMethod = (MethodDefinition)instruction.Previous.Previous.Operand;
-            String name = ((MethodReference)anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand).Name;
+            var anonymousMethod = (MethodDefinition) instruction.Previous.Previous.Operand;
+            String name = ((MethodReference) anonymousMethod.Body.Instructions.Single(x => CallOpCodes.Contains(x.OpCode)).Operand).Name;
             RemoveEventFieldPrefixes(ref name);
             // TODO: Remove anonymous method using ilProcessor.Body.Method.DeclaringType.Methods.
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
@@ -246,6 +252,40 @@ namespace NameOf.Fody {
                 fieldName = fieldName.Substring(removePrefix.Length);
             else
                 throw new NotSupportedException();
+        }
+        private static readonly MethodInfo NameOfFieldMethodInfo = new Func<Func<Object, Object>, String>(Name.OfField).Method;
+        private static readonly String NameOfFieldMethodSignature = String.Format("{0} {1}::{2}", NameOfFieldMethodInfo.ReturnType, NameOfFieldMethodInfo.DeclaringType, NameOfFieldMethodInfo.Name);
+        private static readonly OpCode[] LdfldOpCodes = {OpCodes.Ldfld, OpCodes.Ldflda, OpCodes.Ldsfld, OpCodes.Ldsflda};
+        private static Boolean ProcessStaticNameOfFieldCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
+            if (!((MethodReference) instruction.Operand).FullName.StartsWith(NameOfFieldMethodSignature))
+                return false;
+            Instruction hold = instruction;
+            for (var i = 0; i != StaticNameOfLambdaCallInstructionOpCodePattern.Count(); ++i) {
+                if ((hold = hold.Previous) == null)
+                    return false;
+                if (hold.OpCode != StaticNameOfLambdaCallInstructionOpCodePattern.Reverse().ElementAt(i))
+                    return false;
+            }
+            var anonymousMethod = (MethodDefinition) instruction.Previous.Previous.Previous.Previous.Previous.Operand;
+            var loadEventFieldInstruction = (FieldDefinition) anonymousMethod.Body.Instructions.Single(x => LdfldOpCodes.Contains(x.OpCode)).Operand;
+            String name = loadEventFieldInstruction.Name;
+            // TODO: Remove anonymous method using ilProcessor.Body.Method.DeclaringType.Methods.
+            ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
+            hold = instruction;
+            for (var i = 0; i != StaticNameOfLambdaCallInstructionOpCodePattern.Count() + 1; ++i) {
+                var temp = hold.Previous;
+                ilProcessor.Remove(hold);
+                hold = temp;
+            }
+            return true;
+        }
+        private static Boolean ProcessNameOfMethodCallInstruction(Instruction instruction, ILProcessor processor) {
+            var instructionOpCodePattern = new[] {
+                                                     OpCodes.Ldfld,
+                                                     OpCodes.Ldftn,
+                                                     OpCodes.Newobj
+                                                 };
+            throw new NotImplementedException();
         }
     }
 }
