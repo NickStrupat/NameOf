@@ -7,73 +7,280 @@ namespace AssemblyToProcess {
     public static class Invocations {
         private static void VoidMethod() {}
         private static Object Method() { return null; }
+        private static Boolean valueTypeField;
+        private static String referenceTypeField;
+        private static Boolean ValueTypeProperty { get; set; }
+        private static String ReferenceTypeProperty { get; set; }
         public static void Arguments() {
-            PrivateArguments(null, 42, new[] {true, false});
+            PrivateArguments(null, 42, null, null, new[] {true, false});
         }
-        private static void PrivateArguments(Object @object, Int32 integer, IEnumerable<Boolean> booleans) {
+        private static void PrivateArguments(Object @object, Int32 integer, Object three, Object four, IEnumerable<Boolean> booleans) {
             Assert.AreEqual(Name.Of(@object), "object");
+            // ldarg.0 
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(integer), "integer");
+            // ldarg.1 
+            // box int32
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(booleans), "booleans");
+            // ldarg.s booleans
+            // call string [Name.Of]Name::Of(object)
+
         }
         public static void Member() {
             Assert.AreEqual(Name.Of(Method), "Method");
+            // ldnull 
+            // ldftn object AssemblyToProcess.Invocations::Method()
+            // newobj instance void [mscorlib]System.Func`1<object>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<object>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.OfVoidMethod(VoidMethod), "VoidMethod");
+            // ldnull 
+            // ldftn void AssemblyToProcess.Invocations::VoidMethod()
+            // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
+            // call string [Name.Of]Name::OfVoidMethod(class [mscorlib]System.Action)
+
+            Assert.AreEqual(Name.Of(valueTypeField), "valueTypeField");
+            // ldsfld bool AssemblyToProcess.Invocations::valueTypeField
+            // box bool
+            // call string [Name.Of]Name::Of(object)
+
+            Assert.AreEqual(Name.Of(referenceTypeField), "referenceTypeField");
+            // ldsfld bool AssemblyToProcess.Invocations::valueTypeField
+            // box bool
+            // call string [Name.Of]Name::Of(object)
+
+            Assert.AreEqual(Name.Of(ValueTypeProperty), "ValueTypeProperty");
+            // call bool AssemblyToProcess.Invocations::get_ValueTypeProperty()
+            // box bool
+            // call string [Name.Of]Name::Of(object)
+
+            Assert.AreEqual(Name.Of(ReferenceTypeProperty), "ReferenceTypeProperty");
+            // call string AssemblyToProcess.Invocations::get_ReferenceTypeProperty()
+            // call string [Name.Of]Name::Of(object)
         }
         public static void Local() {
             var anonymousType = new { property = true };
             Assert.AreEqual(Name.Of(anonymousType), "anonymousType");
+            // ldloc.0
+            // call string [Name.Of]Name::Of(object)
+
             Nullable<Single> nullableType = 42.0f;
             Assert.AreEqual(Name.Of(nullableType), "nullableType");
+            // ldloc.1
+            // box [mscorlib]System.Nullable`1<float32>
+            // call string [Name.Of]Name::Of(object)
+
             Boolean systemValueType = true;
             Assert.AreEqual(Name.Of(systemValueType), "systemValueType");
+            // ldloc.2
+            // box bool
+            // call string [Name.Of]Name::Of(object)
+
             String systemReferenceType = "foo";
             Assert.AreEqual(Name.Of(systemReferenceType), "systemReferenceType");
+            // ldloc.3
+            // call string [Name.Of]Name::Of(object)
+
             Abc valueType = new Abc();
+            valueType.GetHashCode();
             Assert.AreEqual(Name.Of(valueType), "valueType");
+            // ldloc.s valueType
+            // box AssemblyToProcess.Abc
+            // call string [Name.Of]Name::Of(object)
+
             Def referenceType = new Def();
             Assert.AreEqual(Name.Of(referenceType), "referenceType");
+            // ldloc.s referenceType
+            // call string [Name.Of]Name::Of(object)
+
             Func<Int32> valueTypeDelegate = () => 1337;
             Assert.AreEqual(Name.Of(valueTypeDelegate), "valueTypeDelegate");
+            // ldloc.s valueTypeDelegate
+            // call string [Name.Of]Name::Of<int32>(class [mscorlib]System.Func`1<!!0>)
+
             Func<Object> referenceTypeDelegate = () => new Object();
             Assert.AreEqual(Name.Of(referenceTypeDelegate), "referenceTypeDelegate");
+            // ldloc.s referenceTypeDelegate
+            // call string [Name.Of]Name::Of<object>(class [mscorlib]System.Func`1<!!0>)
+
             Action referenceTypeDelegate2 = () => { };
             Assert.AreEqual(Name.Of(referenceTypeDelegate2), "referenceTypeDelegate2");
+            // ldloc.s referenceTypeDelegate2
+            // call string [Name.Of]Name::Of(object)
         }
         public static void Type() {
             Assert.AreEqual(Name.Of<Values>(), typeof(Values).Name);
+            // call string [Name.Of]Name::Of<valuetype AssemblyToProcess.Values>()
+
             Assert.AreEqual(Name.Of(typeof(StaticClass)), typeof(StaticClass).Name);
+            // ldtoken AssemblyToProcess.StaticClass
+            // call class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of<InstanceClass>(), typeof(InstanceClass).Name);
+            // call string [Name.Of]Name::Of<class AssemblyToProcess.InstanceClass>()
         }
         public static void Static() {
+            Assert.AreEqual(Name.Of(Values.BarValue), "BarValue");
+            // ldc.i4.1 
+            // box AssemblyToProcess.Values
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassNullableTypeField), "StaticClassNullableTypeField"); 
+            // ldsfld valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.StaticClass::StaticClassNullableTypeField
+            // box [mscorlib]System.Nullable`1<float32>
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemValueTypeField), "StaticClassSystemValueTypeField");
+            // ldsfld bool AssemblyToProcess.StaticClass::StaticClassSystemValueTypeField
+            // box bool
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemReferenceTypeField), "StaticClassSystemReferenceTypeField");
+            // ldsfld string AssemblyToProcess.StaticClass::StaticClassSystemReferenceTypeField
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeField), "StaticClassValueTypeField");
+            // ldsfld valuetype AssemblyToProcess.Abc AssemblyToProcess.StaticClass::StaticClassValueTypeField
+            // box AssemblyToProcess.Abc
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassReferenceTypeField), "StaticClassReferenceTypeField");
+            // ldsfld class AssemblyToProcess.Def AssemblyToProcess.StaticClass::StaticClassReferenceTypeField
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeDelegateField), "StaticClassValueTypeDelegateField");
+            // ldsfld class [mscorlib]System.Func`1<int32> AssemblyToProcess.StaticClass::StaticClassValueTypeDelegateField
+            // call string [Name.Of]Name::Of<int32>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassReferenceTypeDelegateField), "StaticClassReferenceTypeDelegateField");
+            // ldsfld class [mscorlib]System.Func`1<object> AssemblyToProcess.StaticClass::StaticClassReferenceTypeDelegateField
+            // call string [Name.Of]Name::Of<object>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassDelegateField), "StaticClassDelegateField");
+            // ldsfld class [mscorlib]System.Action AssemblyToProcess.StaticClass::StaticClassDelegateField
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassNullableTypeProperty), "StaticClassNullableTypeProperty");
+            // call valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.StaticClass::get_StaticClassNullableTypeProperty()
+            // box [mscorlib]System.Nullable`1<float32>
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemValueTypeProperty), "StaticClassSystemValueTypeProperty");
+            // L_00e8: call bool AssemblyToProcess.StaticClass::get_StaticClassSystemValueTypeProperty()
+            // L_00ed: box bool
+            // L_00f2: call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemReferenceTypeProperty), "StaticClassSystemReferenceTypeProperty");
+            // call string AssemblyToProcess.StaticClass::get_StaticClassSystemReferenceTypeProperty()
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeProperty), "StaticClassValueTypeProperty");
+            // call valuetype AssemblyToProcess.Abc AssemblyToProcess.StaticClass::get_StaticClassValueTypeProperty()
+            // box AssemblyToProcess.Abc
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassReferenceTypeProperty), "StaticClassReferenceTypeProperty");
+            // call class AssemblyToProcess.Def AssemblyToProcess.StaticClass::get_StaticClassReferenceTypeProperty()
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeDelegateProperty), "StaticClassValueTypeDelegateProperty");
+            // call class [mscorlib]System.Func`1<int32> AssemblyToProcess.StaticClass::get_StaticClassValueTypeDelegateProperty()
+            // call string [Name.Of]Name::Of<int32>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassReferenceTypeDelegateProperty), "StaticClassReferenceTypeDelegateProperty");
+            // call class [mscorlib]System.Func`1<object> AssemblyToProcess.StaticClass::get_StaticClassReferenceTypeDelegateProperty()
+            // call string [Name.Of]Name::Of<object>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassDelegateProperty), "StaticClassDelegateProperty");
+            // call class [mscorlib]System.Action AssemblyToProcess.StaticClass::get_StaticClassDelegateProperty()
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassNullableTypeMethod), "StaticClassNullableTypeMethod");
+            // ldnull 
+            // ldftn valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.StaticClass::StaticClassNullableTypeMethod()
+            // newobj instance void [mscorlib]System.Func`1<valuetype [mscorlib]System.Nullable`1<float32>>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<valuetype [mscorlib]System.Nullable`1<float32>>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemValueTypeMethod), "StaticClassSystemValueTypeMethod");
+            // ldnull 
+            // ldftn bool AssemblyToProcess.StaticClass::StaticClassSystemValueTypeMethod()
+            // newobj instance void [mscorlib]System.Func`1<bool>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<bool>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassSystemReferenceTypeMethod), "StaticClassSystemReferenceTypeMethod");
+            // ldnull 
+            // ldftn string AssemblyToProcess.StaticClass::StaticClassSystemReferenceTypeMethod()
+            // newobj instance void [mscorlib]System.Func`1<string>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<string>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeMethod), "StaticClassValueTypeMethod");
+            // ldnull 
+            // ldftn valuetype AssemblyToProcess.Abc AssemblyToProcess.StaticClass::StaticClassValueTypeMethod()
+            // newobj instance void [mscorlib]System.Func`1<valuetype AssemblyToProcess.Abc>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<valuetype AssemblyToProcess.Abc>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassReferenceTypeMethod), "StaticClassReferenceTypeMethod");
+            // ldnull 
+            // ldftn class AssemblyToProcess.Def AssemblyToProcess.StaticClass::StaticClassReferenceTypeMethod()
+            // newobj instance void [mscorlib]System.Func`1<class AssemblyToProcess.Def>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<class AssemblyToProcess.Def>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeGenericMethod<V>), "StaticClassValueTypeGenericMethod");
+            // ldnull 
+            // ldftn valuetype AssemblyToProcess.Abc AssemblyToProcess.StaticClass::StaticClassValueTypeGenericMethod<valuetype [Name.Of]V>()
+            // newobj instance void [mscorlib]System.Func`1<valuetype AssemblyToProcess.Abc>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<valuetype AssemblyToProcess.Abc>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassReferenceTypeGenericMethod<R, V, R, R>), "StaticClassReferenceTypeGenericMethod");
+            // ldnull 
+            // ldftn class AssemblyToProcess.Def AssemblyToProcess.StaticClass::StaticClassReferenceTypeGenericMethod<class [Name.Of]R, valuetype [Name.Of]V, class [Name.Of]R, class [Name.Of]R>()
+            // newobj instance void [mscorlib]System.Func`1<class AssemblyToProcess.Def>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<class AssemblyToProcess.Def>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassValueTypeDelegateMethod), "StaticClassValueTypeDelegateMethod");
+            // ldnull 
+            // ldftn class [mscorlib]System.Func`1<int32> AssemblyToProcess.StaticClass::StaticClassValueTypeDelegateMethod()
+            // newobj instance void [mscorlib]System.Func`1<class [mscorlib]System.Func`1<int32>>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<class [mscorlib]System.Func`1<int32>>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassReferenceTypeDelegateMethod), "StaticClassReferenceTypeDelegateMethod");
+            // ldnull 
+            // ldftn class [mscorlib]System.Func`1<object> AssemblyToProcess.StaticClass::StaticClassReferenceTypeDelegateMethod()
+            // newobj instance void [mscorlib]System.Func`1<class [mscorlib]System.Func`1<object>>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<class [mscorlib]System.Func`1<object>>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassDelegateMethod), "StaticClassDelegateMethod");
+            // ldnull 
+            // ldftn class [mscorlib]System.Action AssemblyToProcess.StaticClass::StaticClassDelegateMethod()
+            // newobj instance void [mscorlib]System.Func`1<class [mscorlib]System.Action>::.ctor(object, native int)
+            // call string [Name.Of]Name::Of<class [mscorlib]System.Action>(class [mscorlib]System.Func`1<!!0>)
+
             Assert.AreEqual(Name.OfVoidMethod(StaticClass.StaticClassVoidMethod), "StaticClassVoidMethod");
+            // ldnull 
+            // ldftn void AssemblyToProcess.StaticClass::StaticClassVoidMethod()
+            // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
+            // call string [Name.Of]Name::OfVoidMethod(class [mscorlib]System.Action)
+
             Assert.AreEqual(Name.OfVoidMethod(StaticClass.StaticClassVoidGenericMethod<R>), "StaticClassVoidGenericMethod");
+            // ldnull 
+            // ldftn void AssemblyToProcess.StaticClass::StaticClassVoidGenericMethod<class [Name.Of]R>()
+            // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
+            // call string [Name.Of]Name::OfVoidMethod(class [mscorlib]System.Action)
+
             Assert.AreEqual(Name.OfEvent(e => StaticClass.StaticClassEvent += e), "StaticClassEvent");
+            // ldsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
+            // brtrue.s L_02ef
+            // ldnull 
+            // ldftn void AssemblyToProcess.Invocations::<Static>b__6(class [mscorlib]System.EventHandler)
+            // newobj instance void [mscorlib]System.Action`1<class [mscorlib]System.EventHandler>::.ctor(object, native int)
+            // stsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
+            // br.s L_02ef
+            // ldsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
+            // call string [Name.Of]Name::OfEvent(class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler>)
         }
         public static void StaticInstance() {
             Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
@@ -147,11 +354,6 @@ namespace AssemblyToProcess {
                 AssertFail();
             }
             catch (NotSupportedException) { }
-            //try {
-            //    Name.Of<InstanceClass>(x => (InstanceClass) x);
-            //    AssertFail();
-            //}
-            //catch (NotSupportedException) { }
             try {
                 Name.OfEvent<InstanceClass>((x,y) => x.InstanceClassEvent += (s,e)=>{});
                 AssertFail();
