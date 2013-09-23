@@ -1,6 +1,8 @@
 ﻿namespace AssemblyToProcess {
     enum Values {
         FooValue,
-        BarValue
+        BarValue,
+        WhatValue = -1,
+        WhoValue = 42
     }
 }

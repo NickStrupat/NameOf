@@ -27,14 +27,19 @@ namespace NameOf.Fody {
             foreach (var nameOfCallInstruction in nameOfCallInstructions)
                 ProcessNameOfCallInstruction(nameOfCallInstruction, methodBodyIlProcessor);
         }
-        private Int32 GetNumberAtEndOfOpCode(OpCode opCode) {
+        private static Int32 GetNumberAtEndOf(OpCode opCode) {
             return Int32.Parse(opCode.ToString().Last().ToString());
         }
         private PatternInstruction[][] patterns = {
 #region Enum Value
 		                                             new [] {
-                                                         new PatternInstruction(new []{OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4, OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8}),
-                                                         new PatternInstruction(OpCodes.Box, (i, p) => ((TypeDefinition)i.Operand).Fields.Single(x => x.Constant == GetNumberAtEndOfOpCode(i.OpCode)).Name, (i, p) => ((TypeDefinition)i.Operand).IsEnum),
+                                                         new PatternInstruction(new []{OpCodes.Ldc_I4, OpCodes.Ldc_I4_S, OpCodes.Ldc_I8, OpCodes.Ldc_R4, OpCodes.Ldc_R8}),
+                                                         new PatternInstruction(OpCodes.Box, (i, p) => ((TypeDefinition)i.Operand).Fields.Single(x => (Int32)x.Constant == (Int32)i.Previous.Operand).Name, (i, p) => ((TypeDefinition)i.Operand).IsEnum),
+                                                         new NameOfPatternInstruction(OpCodes.Call),
+                                                     },
+		                                             new [] {
+                                                         new PatternInstruction(new []{OpCodes.Ldc_I4_M1, OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4, OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8}),
+                                                         new PatternInstruction(OpCodes.Box, (i, p) => ((TypeDefinition)i.Operand).Fields.Single(x => (Int32)x.Constant == GetNumberAtEndOf(i.OpCode)).Name, (i, p) => ((TypeDefinition)i.Operand).IsEnum),
                                                          new NameOfPatternInstruction(OpCodes.Call),
                                                      },
 #endregion

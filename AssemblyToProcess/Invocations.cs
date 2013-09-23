@@ -129,6 +129,21 @@ namespace AssemblyToProcess {
             // box AssemblyToProcess.Values
             // call string [Name.Of]Name::Of(object)
 
+            Assert.AreEqual(Name.Of(Values.FooValue), "FooValue");
+            // ldc.i4.0 
+            // box AssemblyToProcess.Values
+            // call string [Name.Of]Name::Of(object)
+
+            Assert.AreEqual(Name.Of(Values.WhatValue), "WhatValue");
+            // ldc.i4.m1 
+            // box AssemblyToProcess.Values
+            // call string [Name.Of]Name::Of(object)
+
+            Assert.AreEqual(Name.Of(Values.WhoValue), "WhoValue");
+            // ldc.i4.s 0x2a
+            // box AssemblyToProcess.Values
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(StaticClass.StaticClassNullableTypeField), "StaticClassNullableTypeField"); 
             // ldsfld valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.StaticClass::StaticClassNullableTypeField
             // box [mscorlib]System.Nullable`1<float32>
