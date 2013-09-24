@@ -26,14 +26,17 @@ General purpose
 	String nonVoidMethodWithoutInstance = Name.OfMethod<InstanceClass, ReturnType>(x => x.NonVoidMethod); // yields "NonVoidMethod"
 
 Events
+
     String eventName = Name.OfEvent(e => instanceClass.InstanceClassEvent += e); // yields "InstanceClassEvent"
     String eventNameWithoutInstance = Name.OfEvent<InstanceClass>((x,e) => x.InstanceClassEvent += e); // yields "InstanceClassEvent"
 we need to use this assign syntax because C# doesn't allow referencing an event outside of its containing type
 
 Void methods
+
     String voidMethodName = Name.OfVoidMethod(VoidReturnMethod); // yields "VoidReturnMethod"
 
 Generic methods
+
     String genericMethodName = Name.Of(instance.GenericMethod<V, R>) // yields "GenericMethod"
 V (value) and R (reference) are dummy struct and class types, respectively, for supplying constrained generic arguments
 Example signature
