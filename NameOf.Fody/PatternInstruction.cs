@@ -1,22 +1,39 @@
 ﻿using System;
+using System.Linq;
 using Mono.Cecil.Cil;
 
 namespace NameOf.Fody {
+    public delegate String Terminal(Instruction instruction, ILProcessor ilProcessor);
+    public delegate Boolean Predicate(Instruction instruction, ILProcessor ilProcessor);
     class PatternInstruction {
         public OpCode[] EligibleOpCodes { get; private set; }
-        public Func<Instruction, ILProcessor, String> TerminalFunc { get; private set; }
-        public PatternInstruction(OpCode[] eligibleOpCodes, Func<Instruction, ILProcessor, String> terminalFunc = null, Func<Instruction, ILProcessor, Boolean> condition = null) {
-            EligibleOpCodes = eligibleOpCodes;
-            TerminalFunc = terminalFunc;
+        public Terminal Terminal { get; private set; }
+        private readonly Predicate predicate;
+        public Boolean IsPredicated(Instruction instruction, ILProcessor ilProcessor) {
+            try {
+                return predicate(instruction, ilProcessor);
+            }
+            catch (Exception) {
+                return false;
+            }
         }
-        public PatternInstruction(OpCode opCode, Func<Instruction, ILProcessor, String> terminalFunc = null, Func<Instruction, ILProcessor, Boolean> condition = null) : this(new[] { opCode }, terminalFunc, condition) { }
+        private static Boolean PredicateDummy(Instruction instruction, ILProcessor ilProcessor) { return true; }
+        public PatternInstruction(OpCode[] eligibleOpCodes, Terminal terminal = null, Predicate predicate = null) {
+            if (eligibleOpCodes == null || eligibleOpCodes.Count() == 0)
+                throw new ArgumentNullException();
+            EligibleOpCodes = eligibleOpCodes;
+            Terminal = terminal;
+            this.predicate = predicate ?? PredicateDummy;
+        }
+        public PatternInstruction(OpCode opCode, Terminal terminal = null, Predicate predicate = null) : this(new[] { opCode }, terminal, predicate) { }
     }
     class OptionalPatternInstruction : PatternInstruction {
-        public OptionalPatternInstruction(OpCode[] eligibleOpCodes, Func<Instruction, ILProcessor, String> terminalFunc = null) : base(eligibleOpCodes, terminalFunc) { }
-        public OptionalPatternInstruction(OpCode opCode, Func<Instruction, ILProcessor, String> terminalFunc = null) : base(opCode, terminalFunc) { }
+        public OptionalPatternInstruction(OpCode[] eligibleOpCodes, Terminal terminal = null, Predicate predicate = null) : base(eligibleOpCodes, terminal, predicate) { }
+        public OptionalPatternInstruction(OpCode opCode, Terminal terminal = null, Predicate predicate = null) : base(opCode, terminal, predicate) { }
     }
     class NameOfPatternInstruction : PatternInstruction {
-        public NameOfPatternInstruction(OpCode[] eligibleOpCodes, Func<Instruction, ILProcessor, String> terminalFunc = null) : base(eligibleOpCodes, terminalFunc) {}
-        public NameOfPatternInstruction(OpCode opCode, Func<Instruction, ILProcessor, String> terminalFunc = null) : base(opCode, terminalFunc) {}
+        public NameOfPatternInstruction(OpCode[] eligibleOpCodes, Terminal terminal = null, Predicate predicate = null) : base(eligibleOpCodes, terminal, predicate) { }
+        public NameOfPatternInstruction(OpCode opCode, Terminal terminal = null, Predicate predicate = null) : base(opCode, terminal, predicate) { }
     }
 }
+;
