@@ -40,6 +40,7 @@ we need to use this assign syntax because C# doesn't allow referencing an event 
     String genericMethodName = Name.Of(instance.GenericMethod<V, R>) // yields "GenericMethod"
 V (value) and R (reference) are dummy struct and class types, respectively, for supplying constrained generic arguments
 Example signature
+
     public void GenericMethod<T, U>() where T : struct
                                       where U : class {}
 
