@@ -19,8 +19,10 @@ namespace NameOf.Fody {
         }
         private static Boolean PredicateDummy(Instruction instruction, ILProcessor ilProcessor) { return true; }
         public PatternInstruction(OpCode[] eligibleOpCodes, Terminal terminal = null, Predicate predicate = null) {
-            if (eligibleOpCodes == null || eligibleOpCodes.Count() == 0)
+            if (eligibleOpCodes == null)
                 throw new ArgumentNullException();
+            if (eligibleOpCodes.Count() == 0)
+                throw new ArgumentException();
             EligibleOpCodes = eligibleOpCodes;
             Terminal = terminal;
             this.predicate = predicate ?? PredicateDummy;
