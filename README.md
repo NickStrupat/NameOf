@@ -29,7 +29,7 @@ Provides strongly typed access to a compile-time string representing the name of
 
     String eventName = Name.OfEvent(e => instanceClass.InstanceClassEvent += e); // yields "InstanceClassEvent"
     String eventNameWithoutInstance = Name.OfEvent<InstanceClass>((x,e) => x.InstanceClassEvent += e); // yields "InstanceClassEvent"
-we need to use this assign syntax because C# doesn't allow referencing an event outside of its containing type
+we need to use this assign syntax because its the only way C# allows us to reference an event outside of its containing type
 
 #### Void methods
 
