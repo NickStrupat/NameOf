@@ -3,9 +3,9 @@ NameOf
 
 Provides strongly typed access to a compile-time string representing the name of a variable, field, property, method, event, enum value, or type.
 
-Other approaches require reflection (introspection) or traversing expression trees of lamdbas, both with hits at run-time and less-than-ideal syntax.
+Other approaches require reflection or traversing the expression tree of a lamdba, each with hits at run-time and less-than-ideal syntax.
 
-This project provides a series of `Name.Of...` methods to support the cleanest syntax C# currently allows. Each instance of the `Name.Of...` methods you use in your code gets removed and replaced at build time with the intended string; it has no run-time hit. This is done using a technique which is more widely referred to as IL weaving (for more info, check out [Fody](http://www.mono-project.com/Cecil) and [Cecil](http://www.mono-project.com/Cecil)).
+This project provides a series of `Name.Of...` methods to support the cleanest syntax C# currently allows, and with no overhead at run-time. Each instance of the `Name.Of...` methods you use in your code gets removed and replaced at build time with the intended string. This is done using a technique which is more widely referred to as IL weaving (for more info, check out [Fody](http://www.mono-project.com/Cecil) and [Cecil](http://www.mono-project.com/Cecil)).
 
 ## Usage
 
