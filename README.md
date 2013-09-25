@@ -26,13 +26,13 @@ This project provides a series of `Name.Of...` methods to support the cleanest s
     String localVariableName = Name.Of(localVariable); // yields "localVariable"
     String propertyName = Name.Of(instanceClass.Property); // yields "Property"
     String methodName = Name.Of(StaticClass.SomeMethod); // yields "SomeMethod"
-    String fieldNameWithoutInstance = Name.OfField<InstanceClass>(x => x.Field); // yields "Field"
-    String nonVoidMethodWithoutInstance = Name.OfMethod<InstanceClass, ReturnType>(x => x.NonVoidMethod); // yields "NonVoidMethod"
+    String fieldNameWithoutInstance = Name.Of<InstanceClass>(x => x.Field); // yields "Field"
+    String nonVoidMethodWithoutInstance = Name.Of<InstanceClass, ReturnType>(x => x.NonVoidMethod); // yields "NonVoidMethod"
 
 #### Events
 
-    String eventName = Name.OfEvent(e => instanceClass.InstanceClassEvent += e); // yields "InstanceClassEvent"
-    String eventNameWithoutInstance = Name.OfEvent<InstanceClass>((x,e) => x.InstanceClassEvent += e); // yields "InstanceClassEvent"
+    String eventName = Name.Of(e => instanceClass.InstanceClassEvent += e); // yields "InstanceClassEvent"
+    String eventNameWithoutInstance = Name.Of<InstanceClass>((x,e) => x.InstanceClassEvent += e); // yields "InstanceClassEvent"
 we need to use this assign syntax because its the only way C# allows us to reference an event outside of its containing type
 
 #### Void methods

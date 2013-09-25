@@ -4,18 +4,13 @@ public struct V {}
 public class R {}
 public static class Name {
     private static NotImplementedException GetNotImplementedException() { return new NotImplementedException("This is just a stub to be removed when processed by Fody."); }
-    #region Static access
     public static String Of<T>() { throw GetNotImplementedException(); }
-    public static String OfField<T>(Func<T, Object> field) { throw GetNotImplementedException(); }
-    public static String OfProperty<T>(Func<T, Object> property) { throw GetNotImplementedException(); }
-    public static String OfMethod<T, TResult>(Func<T, Func<TResult>> method) { throw GetNotImplementedException(); }
+    public static String Of<T>(Func<T, Object> fieldOrProperty) { throw GetNotImplementedException(); }
+    public static String Of<T, TResult>(Func<T, Func<TResult>> method) { throw GetNotImplementedException(); }
+    public static String Of(Object @object) { throw GetNotImplementedException(); }
+    public static String Of<TResult>(Func<TResult> objectOrMethod) { throw GetNotImplementedException(); }
+    public static String OfVoidMethod(Action voidMethod) { throw GetNotImplementedException(); }
     public static String OfVoidMethod<T>(Func<T, Action> voidMethod) { throw GetNotImplementedException(); }
-    #endregion
-    #region Instance access
-    public static String Of(Object expression) { throw GetNotImplementedException(); }
-    public static String Of<TResult>(Func<TResult> expression) { throw GetNotImplementedException(); }
-    public static String OfVoidMethod(Action expression) { throw GetNotImplementedException(); }
-    #endregion
-    public static String OfEvent(Action<EventHandler> @event) { throw GetNotImplementedException(); } 
-    public static String OfEvent<T>(Action<T, EventHandler> @event) { throw GetNotImplementedException(); }
+    public static String Of(Action<EventHandler> @event) { throw GetNotImplementedException(); } 
+    public static String Of<T>(Action<T, EventHandler> @event) { throw GetNotImplementedException(); }
 }

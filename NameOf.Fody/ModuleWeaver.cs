@@ -40,7 +40,7 @@ namespace NameOf.Fody {
         private static readonly MethodInfo GetTypeFromHandleMethodInfo = new Func<RuntimeTypeHandle, Object>(Type.GetTypeFromHandle).Method;
         private static readonly String GetTypeFromHandleMethodSignature = String.Format("{0} {1}::{2}(", GetTypeFromHandleMethodInfo.ReturnType, GetTypeFromHandleMethodInfo.DeclaringType, GetTypeFromHandleMethodInfo.Name);
 
-        private static readonly MethodInfo NameOfEventMethodInfo = new Func<Action<Object, EventHandler>, String>(Name.OfEvent).Method;
+        private static readonly MethodInfo NameOfEventMethodInfo = new Func<Action<Object, EventHandler>, String>(Name.Of).Method;
         private static readonly String NameOfEventMethodSignature = String.Format("{0} {1}::{2}", NameOfEventMethodInfo.ReturnType, NameOfEventMethodInfo.DeclaringType, NameOfEventMethodInfo.Name);
         private static Boolean ContainsOpCodes(Instruction instruction, ILProcessor ilProcessor, OpCode[] validOpCodes) {
             return ((MethodDefinition)instruction.Operand).Body.Instructions.SingleOrDefault(x => validOpCodes.Contains(x.OpCode)) != null;

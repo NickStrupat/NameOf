@@ -289,7 +289,7 @@ namespace AssemblyToProcess {
             // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
             // call string [Name.Of]Name::OfVoidMethod(class [mscorlib]System.Action)
 
-            Assert.AreEqual(Name.OfEvent(e => StaticClass.StaticClassEvent += e), "StaticClassEvent");
+            Assert.AreEqual(Name.Of(e => StaticClass.StaticClassEvent += e), "StaticClassEvent");
             // ldsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
             // brtrue.s L_02ef
             // ldnull 
@@ -298,44 +298,44 @@ namespace AssemblyToProcess {
             // stsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
             // br.s L_02ef
             // ldsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
-            // call string [Name.Of]Name::OfEvent(class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler>)
+            // call string [Name.Of]Name::Of(class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler>)
         }
         public static void StaticInstance() {
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
             // ldloc.0 
             // ldfld class AssemblyToProcess.InstanceClass AssemblyToProcess.Invocations/<>c__DisplayClass43::instanceClass
             // ldfld valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.InstanceClass::InstanceClassNullableTypeField
             // box [mscorlib]System.Nullable`1<float32>
             // call string [Name.Of]Name::Of(object)
 
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassSystemValueTypeField), "InstanceClassSystemValueTypeField");
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassSystemReferenceTypeField), "InstanceClassSystemReferenceTypeField");
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassValueTypeField), "InstanceClassValueTypeField");
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassReferenceTypeField), "InstanceClassReferenceTypeField");
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassValueTypeDelegateField), "InstanceClassValueTypeDelegateField");
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassReferenceTypeDelegateField), "InstanceClassReferenceTypeDelegateField");
-            Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassDelegateField), "InstanceClassDelegateField");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassNullableTypeProperty), "InstanceClassNullableTypeProperty");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassSystemValueTypeProperty), "InstanceClassSystemValueTypeProperty");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassSystemReferenceTypeProperty), "InstanceClassSystemReferenceTypeProperty");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassValueTypeProperty), "InstanceClassValueTypeProperty");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassReferenceTypeProperty), "InstanceClassReferenceTypeProperty");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassValueTypeDelegateProperty), "InstanceClassValueTypeDelegateProperty");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassReferenceTypeDelegateProperty), "InstanceClassReferenceTypeDelegateProperty");
-            Assert.AreEqual(Name.OfProperty<InstanceClass>(x => x.InstanceClassDelegateProperty), "InstanceClassDelegateProperty");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Nullable<Single>>(x => x.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Boolean>(x => x.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, String>(x => x.InstanceClassSystemReferenceTypeMethod), "InstanceClassSystemReferenceTypeMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Abc>(x => x.InstanceClassValueTypeMethod), "InstanceClassValueTypeMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Def>(x => x.InstanceClassReferenceTypeMethod), "InstanceClassReferenceTypeMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Abc>(x => x.InstanceClassValueTypeGenericMethod<V>), "InstanceClassValueTypeGenericMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Def>(x => x.InstanceClassReferenceTypeGenericMethod<R, V, R, R>), "InstanceClassReferenceTypeGenericMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Func<Int32>>(x => x.InstanceClassValueTypeDelegateMethod), "InstanceClassValueTypeDelegateMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Func<Object>>(x => x.InstanceClassReferenceTypeDelegateMethod), "InstanceClassReferenceTypeDelegateMethod");
-            Assert.AreEqual(Name.OfMethod<InstanceClass, Action>(x => x.InstanceClassDelegateMethod), "InstanceClassDelegateMethod");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemValueTypeField), "InstanceClassSystemValueTypeField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeField), "InstanceClassSystemReferenceTypeField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassValueTypeField), "InstanceClassValueTypeField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassReferenceTypeField), "InstanceClassReferenceTypeField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassValueTypeDelegateField), "InstanceClassValueTypeDelegateField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassReferenceTypeDelegateField), "InstanceClassReferenceTypeDelegateField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassDelegateField), "InstanceClassDelegateField");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassNullableTypeProperty), "InstanceClassNullableTypeProperty");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemValueTypeProperty), "InstanceClassSystemValueTypeProperty");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeProperty), "InstanceClassSystemReferenceTypeProperty");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassValueTypeProperty), "InstanceClassValueTypeProperty");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassReferenceTypeProperty), "InstanceClassReferenceTypeProperty");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassValueTypeDelegateProperty), "InstanceClassValueTypeDelegateProperty");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassReferenceTypeDelegateProperty), "InstanceClassReferenceTypeDelegateProperty");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassDelegateProperty), "InstanceClassDelegateProperty");
+            Assert.AreEqual(Name.Of<InstanceClass, Nullable<Single>>(x => x.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Boolean>(x => x.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, String>(x => x.InstanceClassSystemReferenceTypeMethod), "InstanceClassSystemReferenceTypeMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Abc>(x => x.InstanceClassValueTypeMethod), "InstanceClassValueTypeMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Def>(x => x.InstanceClassReferenceTypeMethod), "InstanceClassReferenceTypeMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Abc>(x => x.InstanceClassValueTypeGenericMethod<V>), "InstanceClassValueTypeGenericMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Def>(x => x.InstanceClassReferenceTypeGenericMethod<R, V, R, R>), "InstanceClassReferenceTypeGenericMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Func<Int32>>(x => x.InstanceClassValueTypeDelegateMethod), "InstanceClassValueTypeDelegateMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Func<Object>>(x => x.InstanceClassReferenceTypeDelegateMethod), "InstanceClassReferenceTypeDelegateMethod");
+            Assert.AreEqual(Name.Of<InstanceClass, Action>(x => x.InstanceClassDelegateMethod), "InstanceClassDelegateMethod");
             Assert.AreEqual(Name.OfVoidMethod<InstanceClass>(x => x.InstanceClassVoidMethod), "InstanceClassVoidMethod");
             Assert.AreEqual(Name.OfVoidMethod<InstanceClass>(x => x.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
-            Assert.AreEqual(Name.OfEvent<InstanceClass>((x,e) => x.InstanceClassEvent += e), "InstanceClassEvent");
+            Assert.AreEqual(Name.Of<InstanceClass>((x,e) => x.InstanceClassEvent += e), "InstanceClassEvent");
         }
         public static void Instance() {
             var instanceClass = new InstanceClass();
@@ -367,7 +367,7 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassDelegateMethod), "InstanceClassDelegateMethod");
             Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidMethod), "InstanceClassVoidMethod");
             Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
-            Assert.AreEqual(Name.OfEvent(e => instanceClass.InstanceClassEvent += e), "InstanceClassEvent");
+            Assert.AreEqual(Name.Of(e => instanceClass.InstanceClassEvent += e), "InstanceClassEvent");
         }
         private static void AssertFail() {
             Assert.Fail("This use is not supported");
@@ -379,7 +379,7 @@ namespace AssemblyToProcess {
             }
             catch (NotSupportedException) { }
             try {
-                Name.OfEvent<InstanceClass>((x,y) => x.InstanceClassEvent += (s,e)=>{});
+                Name.Of<InstanceClass>((x,y) => x.InstanceClassEvent += (s,e)=>{});
                 AssertFail();
             }
             catch (NotSupportedException) { }
