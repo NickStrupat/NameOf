@@ -38,7 +38,10 @@ we need to use this assign syntax because its the only way C# allows us to refer
 #### Void methods
 
     String voidMethodName = Name.OfVoidMethod(VoidReturnMethod); // yields "VoidReturnMethod"
-We need to use a different method (`OfVoidMethod`) because C# doesn't take return type into account when resolving overloads, which is what happens when trying to a convert method group (i.e. Action vs Func<T>). There is a full explanation in [a StackOverflow post](http://stackoverflow.com/questions/2057146/compiler-ambiguous-invocation-error-anonymous-method-and-method-group-with-fun).
+We need to use a different method (`OfVoidMethod`) for a reason best explained by [Eric Lippert](http://ericlippert.com/)
+> The principle here is that determining method group convertibility requires selecting a method from a method group using overload resolution, and overload resolution does not consider return types.
+
+There is a full explanation in [a StackOverflow post](http://stackoverflow.com/questions/2057146/compiler-ambiguous-invocation-error-anonymous-method-and-method-group-with-fun).
 
 #### Generic methods
 
