@@ -5,7 +5,7 @@ using Mono.Cecil.Cil;
 namespace NameOf.Fody {
     public delegate String Terminal(Instruction instruction, ILProcessor ilProcessor);
     public delegate Boolean Predicate(Instruction instruction, ILProcessor ilProcessor);
-    class PatternInstruction {
+    partial class PatternInstruction {
         public OpCode[] EligibleOpCodes { get; private set; }
         public Terminal Terminal { get; private set; }
         private readonly Predicate predicate;

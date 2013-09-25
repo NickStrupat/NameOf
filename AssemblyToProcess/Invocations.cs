@@ -111,6 +111,7 @@ namespace AssemblyToProcess {
             // ldloc.s referenceTypeDelegate2
             // call string [Name.Of]Name::Of(object)
         }
+        private interface IInterface {};
         public static void Type() {
             Assert.AreEqual(Name.Of<Values>(), typeof(Values).Name);
             // call string [Name.Of]Name::Of<valuetype AssemblyToProcess.Values>()
@@ -122,6 +123,8 @@ namespace AssemblyToProcess {
 
             Assert.AreEqual(Name.Of<InstanceClass>(), typeof(InstanceClass).Name);
             // call string [Name.Of]Name::Of<class AssemblyToProcess.InstanceClass>()
+
+            Assert.AreEqual(Name.Of<IInterface>(), typeof(IInterface).Name);
         }
         public static void Static() {
             Assert.AreEqual(Name.Of(Values.BarValue), "BarValue");
@@ -299,6 +302,12 @@ namespace AssemblyToProcess {
         }
         public static void StaticInstance() {
             Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
+            // ldloc.0 
+            // ldfld class AssemblyToProcess.InstanceClass AssemblyToProcess.Invocations/<>c__DisplayClass43::instanceClass
+            // ldfld valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.InstanceClass::InstanceClassNullableTypeField
+            // box [mscorlib]System.Nullable`1<float32>
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassSystemValueTypeField), "InstanceClassSystemValueTypeField");
             Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassSystemReferenceTypeField), "InstanceClassSystemReferenceTypeField");
             Assert.AreEqual(Name.OfField<InstanceClass>(x => x.InstanceClassValueTypeField), "InstanceClassValueTypeField");

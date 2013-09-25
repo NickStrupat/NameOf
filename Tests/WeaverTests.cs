@@ -19,7 +19,7 @@ namespace Tests {
             moduleDefinition.Assembly.MainModule.ReadSymbols();
             var moduleWeaver = new ModuleWeaver { ModuleDefinition = moduleDefinition };
             moduleWeaver.Execute();
-            moduleWeaver.ModuleDefinition.Write(assemblyPath.Replace(".dll", ".weaved.dll"));
+            moduleWeaver.ModuleDefinition.Write(assemblyPath/*.Replace(".dll", ".weaved.dll")*/);
         }
         [TestMethod]
         public void Arguments() {

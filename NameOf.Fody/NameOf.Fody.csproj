@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="PatternInstruction.cs" />
     <Compile Include="ModuleWeaver.cs" />
+    <Compile Include="ModuleWeaver.Patterns.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
