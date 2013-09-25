@@ -27,7 +27,7 @@ This project provides a series of `Name.Of...` methods to support the cleanest s
     String propertyName = Name.Of(instanceClass.Property); // yields "Property"
     String methodName = Name.Of(StaticClass.SomeMethod); // yields "SomeMethod"
     String fieldNameWithoutInstance = Name.OfField<InstanceClass>(x => x.Field); // yields "Field"
-	String nonVoidMethodWithoutInstance = Name.OfMethod<InstanceClass, ReturnType>(x => x.NonVoidMethod); // yields "NonVoidMethod"
+    String nonVoidMethodWithoutInstance = Name.OfMethod<InstanceClass, ReturnType>(x => x.NonVoidMethod); // yields "NonVoidMethod"
 
 #### Events
 
@@ -38,11 +38,13 @@ we need to use this assign syntax because its the only way C# allows us to refer
 #### Void methods
 
     String voidMethodName = Name.OfVoidMethod(VoidReturnMethod); // yields "VoidReturnMethod"
+We need to use a different method (`OfVoidMethod`) because C# doesn't take return type into account when resolving overloads, which is what happens when trying to a convert method group (i.e. Action vs Func<T>). There is a full explanation in [a StackOverflow post](http://stackoverflow.com/questions/2057146/compiler-ambiguous-invocation-error-anonymous-method-and-method-group-with-fun).
 
 #### Generic methods
 
     String genericMethodName = Name.Of(instance.GenericMethod<V, R>) // yields "GenericMethod"
 V (value) and R (reference) are dummy struct and class types, respectively, for supplying constrained generic arguments
+
 Example signature
 
     public void GenericMethod<T, U>() where T : struct
