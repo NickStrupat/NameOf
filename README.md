@@ -51,7 +51,7 @@ Example signature
 #### Types
 
     String className = Name.Of<InstanceClass>(); // yields "InstanceClass"
-	String staticClassName = Name.Of(typeof(StaticCless)); // yields "StaticClass"
+	String staticClassName = Name.Of(typeof(StaticClass)); // yields "StaticClass"
 we have to use the `typeof` operator because you can't pass a static class as an argument nor generic argument (don't worry; it doesn't actually use reflection - the `typeof` call is removed during build)
 
 #### Enums
