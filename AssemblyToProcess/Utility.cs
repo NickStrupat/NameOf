@@ -19,7 +19,7 @@ namespace AssemblyToProcess {
             else if (memberExpression.Body is MemberExpression)
                 body = memberExpression.Body as MemberExpression;
             if (body == null)
-                throw new ArgumentException(String.Format("'{0}' should be a member expression", Name.Of(() => memberExpression)));
+                throw new ArgumentException(String.Format("'{0}' should be a member expression", Of(() => memberExpression)));
             return body.Member.Name;
         }
     }

@@ -3,9 +3,9 @@ using System.Linq;
 using Mono.Cecil.Cil;
 
 namespace NameOf.Fody {
-    public delegate String Terminal(Instruction instruction, ILProcessor ilProcessor);
-    public delegate Boolean Predicate(Instruction instruction, ILProcessor ilProcessor);
-    partial class PatternInstruction {
+    delegate String Terminal(Instruction instruction, ILProcessor ilProcessor);
+    delegate Boolean Predicate(Instruction instruction, ILProcessor ilProcessor);
+    class PatternInstruction {
         public OpCode[] EligibleOpCodes { get; private set; }
         public Terminal Terminal { get; private set; }
         private readonly Predicate predicate;
@@ -34,8 +34,7 @@ namespace NameOf.Fody {
         public OptionalPatternInstruction(OpCode opCode, Terminal terminal = null, Predicate predicate = null) : base(opCode, terminal, predicate) { }
     }
     class NameOfPatternInstruction : PatternInstruction {
-        public NameOfPatternInstruction(OpCode[] eligibleOpCodes, Terminal terminal = null, Predicate predicate = null) : base(eligibleOpCodes, terminal, predicate) { }
-        public NameOfPatternInstruction(OpCode opCode, Terminal terminal = null, Predicate predicate = null) : base(opCode, terminal, predicate) { }
+        public NameOfPatternInstruction(Terminal terminal = null, Predicate predicate = null) : base(OpCodes.Call, terminal, predicate) { }
     }
 }
 ;
