@@ -5,7 +5,7 @@ using Mono.Cecil.Cil;
 
 namespace NameOf.Fody {
     partial class ModuleWeaver {
-        private static PatternInstruction[][] patterns = {
+        private static PatternInstruction[][] nameOfCallPatterns = {
             #region Instance
 		    new [] {
                 new PatternInstruction(LoadOpCodes),
@@ -140,6 +140,15 @@ namespace NameOf.Fody {
                 new NameOfPatternInstruction(),
             }, 
             #endregion
+        };
+        private static PatternInstruction[][] lambdaPatterns = {
+            new [] {
+                new PatternInstruction(OpCodes.Ldarg_0),
+                new PatternInstruction(OpCodes.Ldarg_1),
+                new PatternInstruction(OpCodes.Callvirt, (i, p) => String.Empty),
+                new OptionalPatternInstruction(OpCodes.Nop), // This gets emitted into debug builds
+                new PatternInstruction(OpCodes.Ret),
+            }, 
         };
     }
 }
