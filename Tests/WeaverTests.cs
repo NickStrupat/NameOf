@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq.Expressions;
 using AssemblyToProcess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Cecil;
@@ -16,10 +17,15 @@ namespace Tests {
             assemblyPath = assemblyPath.Replace("Debug", "Release");
 #endif
             var moduleDefinition = ModuleDefinition.ReadModule(assemblyPath);
-            moduleDefinition.Assembly.MainModule.ReadSymbols();
+            try {
+                moduleDefinition.Assembly.MainModule.ReadSymbols();
+            }
+            catch (InvalidOperationException ex) {
+                throw new Exception("Make sure Mono.Cecil.Pdb and/or Mono.Cecil.Mdb is/are referenced.", ex);
+            }
             var moduleWeaver = new ModuleWeaver { ModuleDefinition = moduleDefinition };
             moduleWeaver.Execute();
-            moduleWeaver.ModuleDefinition.Write(assemblyPath/*.Replace(".dll", ".weaved.dll")*/);
+            moduleWeaver.ModuleDefinition.Write(assemblyPath.Replace(".dll", ".weaved.dll"));
         }
         [TestMethod]
         public void Arguments() {
