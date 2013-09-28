@@ -86,7 +86,7 @@ namespace NameOf.Fody {
             #endregion
             #region Member
 		    new [] {
-                new PatternInstruction(OpCodes.Ldsfld),
+                new PatternInstruction(OpCodes.Ldsfld, i => CheckIfFieldIsUnused(i)),
                 new PatternInstruction(OpCodes.Brtrue_S),
                 new PatternInstruction(OpCodes.Ldnull),
                 new PatternInstruction(OpCodes.Ldftn, (i, p) => GetNameFromAnonymousMethod(i, p, LambdaOpCodes), (i, p) => ContainsOpCodes(i, p, LambdaOpCodes)),

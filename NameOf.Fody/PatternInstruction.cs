@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Mono.Cecil.Cil;
 
 namespace NameOf.Fody {
@@ -11,6 +9,7 @@ namespace NameOf.Fody {
         public OpCode[] EligibleOpCodes { get; private set; }
         public Terminal Terminal { get; private set; }
         private readonly Predicate predicate;
+        public Action<Instruction> Action { get; private set; }
         public Boolean IsPredicated(Instruction instruction, ILProcessor ilProcessor) {
             try {
                 return predicate(instruction, ilProcessor);
@@ -38,6 +37,9 @@ namespace NameOf.Fody {
             this.predicate = predicate ?? PredicateDummy;
         }
         public PatternInstruction(OpCode opCode, Terminal terminal = null, Predicate predicate = null) : this(new[] { opCode }, terminal, predicate) { }
+        public PatternInstruction(OpCode opCode, Action<Instruction> action) : this(opCode, null, null) {
+            Action = action;
+        }
     }
     class OptionalPatternInstruction : PatternInstruction {
         public OptionalPatternInstruction(OpCode[] eligibleOpCodes, Terminal terminal = null, Predicate predicate = null) : base(eligibleOpCodes, terminal, predicate) { }
