@@ -84,14 +84,10 @@ namespace NameOf.Fody {
             }
             if (patternNotMatched) {
                 // The usage of Name.Of is not supported
-                var i = instruction;
-                while (i.SequencePoint == null && i.Previous != null) // Look for last sequence point
-                    i = i.Previous;
-                String exceptionMessage = String.Format("This usage of '{0}.{1}' is not supported. Source: {2} - line {3}",
+                String exceptionMessage = String.Format("This usage of '{0}.{1}' is not supported. {2}",
                     NameOfMethodInfo.DeclaringType.Name,
                     NameOfMethodInfo.Name,
-                    i.SequencePoint.Document.Url,
-                    i.SequencePoint.StartLine);
+                    GetSequencePointText(instruction));
                 throw new NotSupportedException(exceptionMessage);
             }
             if (terminal == null)
@@ -107,6 +103,14 @@ namespace NameOf.Fody {
                 ilProcessor.Remove(iterator);
                 iterator = temp;
             }
+        }
+        private static String GetSequencePointText(Instruction instruction) {
+            var i = instruction;
+            while (i.SequencePoint == null && i.Previous != null) // Look for last sequence point
+                i = i.Previous;
+            if (i.SequencePoint == null)
+                return "No source line information available.";
+            return String.Format("Source: {0} - line {1}", i.SequencePoint.Document.Url, i.SequencePoint.StartLine);
         }
     }
 }
