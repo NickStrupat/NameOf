@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq.Expressions;
 using AssemblyToProcess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Cecil;
@@ -25,7 +24,8 @@ namespace Tests {
             }
             var moduleWeaver = new ModuleWeaver { ModuleDefinition = moduleDefinition };
             moduleWeaver.Execute();
-            moduleWeaver.ModuleDefinition.Write(assemblyPath.Replace(".dll", ".weaved.dll"));
+            moduleWeaver.ModuleDefinition.Write(assemblyPath = assemblyPath.Replace(".dll", ".weaved.dll"));
+            Verifier.Verify(assemblyPath);
         }
         [TestMethod]
         public void Arguments() {
