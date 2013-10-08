@@ -302,12 +302,6 @@ namespace AssemblyToProcess {
         }
         public static void StaticInstance() {
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
-            // ldloc.0 
-            // ldfld class AssemblyToProcess.InstanceClass AssemblyToProcess.Invocations/<>c__DisplayClass43::instanceClass
-            // ldfld valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.InstanceClass::InstanceClassNullableTypeField
-            // box [mscorlib]System.Nullable`1<float32>
-            // call string [Name.Of]Name::Of(object)
-
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemValueTypeField), "InstanceClassSystemValueTypeField");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeField), "InstanceClassSystemReferenceTypeField");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassValueTypeField), "InstanceClassValueTypeField");
@@ -315,6 +309,23 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassValueTypeDelegateField), "InstanceClassValueTypeDelegateField");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassReferenceTypeDelegateField), "InstanceClassReferenceTypeDelegateField");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassDelegateField), "InstanceClassDelegateField");
+            // ldsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate26
+            // brtrue.s L_004a
+            // ldnull 
+            // ldftn object AssemblyToProcess.Invocations::<StaticInstance>b__9(class AssemblyToProcess.InstanceClass)
+            // newobj instance void [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object>::.ctor(object, native int)
+            // stsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate26
+            // br.s L_004a
+            // ldsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate26
+            // call string [Name.Of]Name::Of<class AssemblyToProcess.InstanceClass>(class [mscorlib]System.Func`2<!!0, object>)
+                // ldarg.0 
+                // ldfld valuetype [mscorlib]System.Nullable`1<float32> AssemblyToProcess.InstanceClass::InstanceClassNullableTypeField
+                // box [mscorlib]System.Nullable`1<float32>
+                // stloc.0 
+                // br.s L_000e
+                // ldloc.0 
+                // ret 
+
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassNullableTypeProperty), "InstanceClassNullableTypeProperty");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemValueTypeProperty), "InstanceClassSystemValueTypeProperty");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeProperty), "InstanceClassSystemReferenceTypeProperty");
@@ -323,6 +334,25 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassValueTypeDelegateProperty), "InstanceClassValueTypeDelegateProperty");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassReferenceTypeDelegateProperty), "InstanceClassReferenceTypeDelegateProperty");
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassDelegateProperty), "InstanceClassDelegateProperty");
+            // ldsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate30
+            // brtrue.s L_0220
+            // ldnull 
+            // ldftn object AssemblyToProcess.Invocations::<StaticInstance>b__13(class AssemblyToProcess.InstanceClass)
+            // newobj instance void [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object>::.ctor(object, native int)
+            // stsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate30
+            // br.s L_0220
+            // ldsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, object> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate30
+            // call string [Name.Of]Name::Of<class AssemblyToProcess.InstanceClass>(class [mscorlib]System.Func`2<!!0, object>)
+                // ldarg.0 
+                // callvirt instance bool AssemblyToProcess.InstanceClass::get_InstanceClassSystemValueTypeProperty()
+                // box bool
+                // stloc.0 
+                // br.s L_000e
+                // ldloc.0 
+                // ret 
+
+
+
             Assert.AreEqual(Name.Of<InstanceClass, Nullable<Single>>(x => x.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Boolean>(x => x.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, String>(x => x.InstanceClassSystemReferenceTypeMethod), "InstanceClassSystemReferenceTypeMethod");
@@ -335,7 +365,38 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of<InstanceClass, Action>(x => x.InstanceClassDelegateMethod), "InstanceClassDelegateMethod");
             Assert.AreEqual(Name.OfVoidMethod<InstanceClass>(x => x.InstanceClassVoidMethod), "InstanceClassVoidMethod");
             Assert.AreEqual(Name.OfVoidMethod<InstanceClass>(x => x.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
+            // ldsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.Func`1<valuetype [mscorlib]System.Nullable`1<float32>>> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate35
+            // brtrue.s L_030b
+            // ldnull 
+            // ldftn class [mscorlib]System.Func`1<valuetype [mscorlib]System.Nullable`1<float32>> AssemblyToProcess.Invocations::<StaticInstance>b__18(class AssemblyToProcess.InstanceClass)
+            // newobj instance void [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.Func`1<valuetype [mscorlib]System.Nullable`1<float32>>>::.ctor(object, native int)
+            // stsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.Func`1<valuetype [mscorlib]System.Nullable`1<float32>>> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate35
+            // br.s L_030b
+            // ldsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.Func`1<valuetype [mscorlib]System.Nullable`1<float32>>> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate35
+            // call string [Name.Of]Name::Of<class AssemblyToProcess.InstanceClass, valuetype [mscorlib]System.Nullable`1<float32>>(class [mscorlib]System.Func`2<!!0, class [mscorlib]System.Func`1<!!1>>)
+                // ldarg.0 
+                // ldftn instance bool AssemblyToProcess.InstanceClass::InstanceClassSystemValueTypeMethod()
+                // newobj instance void [mscorlib]System.Func`1<bool>::.ctor(object, native int)
+                // stloc.0 
+                // br.s L_000f
+                // ldloc.0 
+                // ret 
+
             Assert.AreEqual(Name.Of<InstanceClass>((x,e) => x.InstanceClassEvent += e), "InstanceClassEvent");
+            // ldsfld class [mscorlib]System.Action`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate41
+            // brtrue.s L_053f
+            // ldnull 
+            // ldftn void AssemblyToProcess.Invocations::<StaticInstance>b__24(class AssemblyToProcess.InstanceClass, class [mscorlib]System.EventHandler)
+            // newobj instance void [mscorlib]System.Action`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.EventHandler>::.ctor(object, native int)
+            // stsfld class [mscorlib]System.Action`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate41
+            // br.s L_053f
+            // ldsfld class [mscorlib]System.Action`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate41
+            // call string [Name.Of]Name::Of<class AssemblyToProcess.InstanceClass>(class [mscorlib]System.Action`2<!!0, class [mscorlib]System.EventHandler>)
+                // ldarg.0 
+                // ldarg.1 
+                // callvirt instance void AssemblyToProcess.InstanceClass::add_InstanceClassEvent(class [mscorlib]System.EventHandler)
+                // nop 
+                // ret 
         }
         public static void Instance() {
             var instanceClass = new InstanceClass();
@@ -373,16 +434,21 @@ namespace AssemblyToProcess {
             Assert.Fail("This use is not supported");
         }
         public static void Errors() {
-            try {
-                Name.Of(() => false);
-                AssertFail();
-            }
-            catch (NotSupportedException) { }
-            try {
-                Name.Of<InstanceClass>((x,y) => x.InstanceClassEvent += (s,e)=>{});
-                AssertFail();
-            }
-            catch (NotSupportedException) { }
+            //try {
+            //    Name.Of(false);
+            //    AssertFail();
+            //}
+            //catch (NotSupportedException) { }
+            //try {
+            //    Name.Of(() => false);
+            //    AssertFail();
+            //}
+            //catch (NotSupportedException) { }
+            //try {
+            //    Name.Of<InstanceClass>((x,y) => x.InstanceClassEvent += (s,e)=>{});
+            //    AssertFail();
+            //}
+            //catch (NotSupportedException) { }
         }
     }
 }

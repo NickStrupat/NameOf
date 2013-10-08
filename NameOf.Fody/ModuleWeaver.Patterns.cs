@@ -30,7 +30,7 @@ namespace NameOf.Fody {
             },
 		    new [] {
                 new PatternInstruction(LoadOpCodes),
-                new PatternInstruction(OpCodes.Ldftn, (i, p) => GetNameFromAnonymousMethod(i, p, CallOpCodes), (i, p) => ContainsOpCodes(i, p, CallOpCodes)),
+                new PatternInstruction(OpCodes.Ldftn, GetNameFromAnonymousMethod/*, (i, p) => GetNameFromAnonymousMethod(i, p) != null*/),
                 new OptionalPatternInstruction(OpCodes.Newobj),
                 new NameOfPatternInstruction(),
             },
@@ -89,7 +89,7 @@ namespace NameOf.Fody {
                 new PatternInstruction(OpCodes.Ldsfld),
                 new PatternInstruction(OpCodes.Brtrue_S),
                 new PatternInstruction(OpCodes.Ldnull),
-                new PatternInstruction(OpCodes.Ldftn, (i, p) => GetNameFromAnonymousMethod(i, p, LambdaOpCodes), (i, p) => ContainsOpCodes(i, p, LambdaOpCodes)),
+                new PatternInstruction(OpCodes.Ldftn, GetNameFromAnonymousMethod/*, (i, p) => GetNameFromAnonymousMethod(i, p) != null*/),
                 new PatternInstruction(OpCodes.Newobj),
                 new PatternInstruction(OpCodes.Stsfld),
                 new PatternInstruction(OpCodes.Br_S),
@@ -142,11 +142,39 @@ namespace NameOf.Fody {
             #endregion
         };
         private static PatternInstruction[][] lambdaPatterns = {
-            new [] {
+            new [] { // Events
                 new PatternInstruction(OpCodes.Ldarg_0),
-                new PatternInstruction(OpCodes.Ldarg_1),
-                new PatternInstruction(OpCodes.Callvirt, (i, p) => String.Empty),
+                new OptionalPatternInstruction(OpCodes.Ldfld),
+                new OptionalPatternInstruction(OpCodes.Ldarg_1),
+                new PatternInstruction(CallOpCodes, (i, p) => ((MethodDefinition)i.Operand).Name.Substring(((MethodDefinition)i.Operand).IsAddOn ? 4 : 7), (i, p) => ((MethodDefinition)i.Operand).IsAddOn || ((MethodDefinition)i.Operand).IsRemoveOn),
                 new OptionalPatternInstruction(OpCodes.Nop), // This gets emitted into debug builds
+                new PatternInstruction(OpCodes.Ret),
+            },
+            new [] { // Fields
+                new PatternInstruction(OpCodes.Ldarg_0),
+                new PatternInstruction(OpCodes.Ldfld, (i, p) => ((FieldReference)i.Operand).Name),
+                new OptionalPatternInstruction(OpCodes.Box),
+                new PatternInstruction(OpCodes.Stloc_0),
+                new PatternInstruction(OpCodes.Br_S),
+                new PatternInstruction(OpCodes.Ldloc_0),
+                new PatternInstruction(OpCodes.Ret),
+            }, 
+            new [] { // Properties (getters)
+                new PatternInstruction(OpCodes.Ldarg_0),
+                new PatternInstruction(CallOpCodes, (i, p) => ((MethodDefinition)i.Operand).Name.Substring(4), (i, p) => ((MethodDefinition)i.Operand).IsGetter),
+                new OptionalPatternInstruction(OpCodes.Box),
+                new PatternInstruction(OpCodes.Stloc_0),
+                new PatternInstruction(OpCodes.Br_S),
+                new PatternInstruction(OpCodes.Ldloc_0),
+                new PatternInstruction(OpCodes.Ret),
+            }, 
+            new [] { // Methods
+                new PatternInstruction(OpCodes.Ldarg_0),
+                new PatternInstruction(OpCodes.Ldftn, (i, p) => ((MethodReference)i.Operand).Name),
+                new PatternInstruction(OpCodes.Newobj),
+                new PatternInstruction(OpCodes.Stloc_0),
+                new PatternInstruction(OpCodes.Br_S),
+                new PatternInstruction(OpCodes.Ldloc_0),
                 new PatternInstruction(OpCodes.Ret),
             }, 
         };

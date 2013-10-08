@@ -61,7 +61,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Verifier.cs" />
-    <Compile Include="WeaverTests.cs" />
+    <Compile Include="Weaver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

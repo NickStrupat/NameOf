@@ -32,25 +32,52 @@ namespace NameOf.Fody {
             return number;
         }
         private static readonly OpCode[] CallOpCodes = { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt };
-        private static readonly OpCode[] LambdaOpCodes = CallOpCodes.Concat(new[] { OpCodes.Ldftn, OpCodes.Ldfld }).ToArray();
         private static readonly OpCode[] LoadOpCodes = { OpCodes.Ldfld, OpCodes.Ldsfld, OpCodes.Ldflda, OpCodes.Ldsflda, OpCodes.Ldloc, OpCodes.Ldloc_S, OpCodes.Ldloca, OpCodes.Ldloca_S, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3 };
         private static readonly MethodInfo GetTypeFromHandleMethodInfo = new Func<RuntimeTypeHandle, Object>(Type.GetTypeFromHandle).Method;
         private static readonly String GetTypeFromHandleMethodSignature = String.Format("{0} {1}::{2}(", GetTypeFromHandleMethodInfo.ReturnType, GetTypeFromHandleMethodInfo.DeclaringType, GetTypeFromHandleMethodInfo.Name);
 
-        private static Boolean ContainsOpCodes(Instruction instruction, ILProcessor ilProcessor, OpCode[] validOpCodes) {
-            return ((MethodDefinition)instruction.Operand).Body.Instructions.SingleOrDefault(x => validOpCodes.Contains(x.OpCode)) != null;
-        }
-        private static String GetNameFromAnonymousMethod(Instruction instruction, ILProcessor ilProcessor, OpCode[] validOpCodes) {
-            var memberReference = (MemberReference)((MethodDefinition)instruction.Operand).Body.Instructions.Single(x => validOpCodes.Contains(x.OpCode)).Operand;
-            var name = memberReference.Name;
-            var methodDefinition = memberReference as MethodDefinition;
-            if (methodDefinition != null) {
-                if (methodDefinition.IsGetter || methodDefinition.IsAddOn)
-                    name = name.Substring(4); // remove leading "get_" or "add_"
-                else if (methodDefinition.IsRemoveOn)
-                    name = name.Substring(7); // remove leading "remove_"
+        private static String GetNameFromAnonymousMethod(Instruction anonymousMethodCallInstruction, ILProcessor ilProcessor) {
+            var instruction = ((MethodDefinition)anonymousMethodCallInstruction.Operand).Body.Instructions.Last();
+            Boolean patternNotMatched = true;
+            PatternInstruction[] patternMatched = null;
+            Terminal terminal = null;
+            Instruction terminalInstruction = null;
+            var patternsOrdered = lambdaPatterns.OrderByDescending(x => x.Count()); // Ordered by length of pattern to ensure longest possible patterns (of which shorter patterns might be a subset) are checked first
+            foreach (var pattern in patternsOrdered) {
+                Instruction iterator = instruction;
+                patternNotMatched = false;
+                patternMatched = null;
+                terminal = null;
+                foreach (var patternInstruction in pattern.Reverse()) {
+                    if (patternInstruction is OptionalPatternInstruction && !patternInstruction.EligibleOpCodes.Contains(iterator.OpCode))
+                        continue;
+                    if (!patternInstruction.EligibleOpCodes.Contains(iterator.OpCode) || !patternInstruction.IsPredicated(iterator, ilProcessor)) {
+                        patternNotMatched = true;
+                        break;
+                    }
+                    if (patternInstruction.Terminal != null) {
+                        terminalInstruction = iterator;
+                        terminal = patternInstruction.Terminal;
+                    }
+                    iterator = iterator.Previous;
+                }
+                if (!patternNotMatched) {
+                    patternMatched = pattern;
+                    break;
+                }
+            }
+            if (patternNotMatched)
+                throw GetInvalidTerminalYieldException();
+            if (terminal == null)
+                throw new NotImplementedException("There is no terminal expression implemented for the matched pattern.");
+            String name = terminal(terminalInstruction, ilProcessor);
+            if (name == null) {
+                throw GetInvalidTerminalYieldException();
             }
             return name;
+        }
+        private static InvalidOperationException GetInvalidTerminalYieldException() {
+            return new InvalidOperationException("Terminal didn't yield a valid name.");
         }
         private static void ProcessNameOfCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             Boolean patternNotMatched = true;
@@ -82,17 +109,17 @@ namespace NameOf.Fody {
                     break;
                 }
             }
-            if (patternNotMatched) {
-                // The usage of Name.Of is not supported
-                String exceptionMessage = String.Format("This usage of '{0}.{1}' is not supported. {2}",
-                    NameOfMethodInfo.DeclaringType.Name,
-                    NameOfMethodInfo.Name,
-                    GetSequencePointText(instruction));
-                throw new NotSupportedException(exceptionMessage);
-            }
+            if (patternNotMatched)
+                throw GetNotSupportedException(instruction); // The usage of Name.Of is not supported
             if (terminal == null)
                 throw new NotImplementedException("There is no terminal expression implemented for the matched pattern.");
-            String name = terminal(terminalInstruction, ilProcessor);
+            String name;
+            try {
+                name = terminal(terminalInstruction, ilProcessor);
+            }
+            catch {
+                throw GetNotSupportedException(instruction);
+            }
             // TODO: Remove the anonymous methods generated by lamdba expressions in some uses of Name.Of...
             ilProcessor.InsertAfter(instruction, Instruction.Create(OpCodes.Ldstr, name));
             iterator = instruction;
@@ -103,6 +130,13 @@ namespace NameOf.Fody {
                 ilProcessor.Remove(iterator);
                 iterator = temp;
             }
+        }
+        private static NotSupportedException GetNotSupportedException(Instruction instruction) {
+            String exceptionMessage = String.Format("This usage of '{0}.{1}' is not supported. {2}",
+                                                    NameOfMethodInfo.DeclaringType.Name,
+                                                    NameOfMethodInfo.Name,
+                                                    GetSequencePointText(instruction));
+            return new NotSupportedException(exceptionMessage);
         }
         private static String GetSequencePointText(Instruction instruction) {
             var i = instruction;

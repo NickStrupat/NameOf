@@ -7,7 +7,7 @@ using NameOf.Fody;
 
 namespace Tests {
     [TestClass]
-    public class WeaverTests {
+    public class Weaver {
         [TestMethod]
         public void ActualWeaving() {
             var projectPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\AssemblyToProcess\AssemblyToProcess.csproj"));
@@ -24,7 +24,7 @@ namespace Tests {
             }
             var moduleWeaver = new ModuleWeaver { ModuleDefinition = moduleDefinition };
             moduleWeaver.Execute();
-            moduleWeaver.ModuleDefinition.Write(assemblyPath = assemblyPath.Replace(".dll", ".weaved.dll"));
+            moduleWeaver.ModuleDefinition.Write(assemblyPath/* = assemblyPath.Replace(".dll", ".weaved.dll")*/);
             Verifier.Verify(assemblyPath);
         }
         [TestMethod]
