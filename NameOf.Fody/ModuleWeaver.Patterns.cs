@@ -87,7 +87,7 @@ namespace NameOf.Fody {
             #endregion
             #region Member
 		    new [] {
-                new PatternInstruction(OpCodes.Ldsfld),
+                new PatternInstruction(OpCodes.Ldsfld, instruction => PotentiallyUnusedFieldDefinitions.Add(instruction.Operand as FieldDefinition)),
                 new PatternInstruction(OpCodes.Brtrue_S),
                 new PatternInstruction(OpCodes.Ldnull),
                 new PatternInstruction(OpCodes.Ldftn, GetNameFromAnonymousMethod),
