@@ -445,7 +445,7 @@ namespace AssemblyToProcess {
             //}
             //catch (NotSupportedException) { }
             //try {
-            //    Name.Of<InstanceClass>((x,y) => x.InstanceClassEvent += (s,e)=>{});
+            //    Name.Of<InstanceClass>((x, y) => x.InstanceClassEvent += (s, e) => { });
             //    AssertFail();
             //}
             //catch (NotSupportedException) { }
