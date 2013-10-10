@@ -18,8 +18,10 @@ Reference to the `Name.Of...` dummy methods and assembly is removed. Any anonymo
 #### ArgumentException throw with argument name
 
     public void Foo(String methodArgument) {
+		if (methodArgument == null)
+			throw new ArgumentNullException(Name.Of(methodArgument), "String must not be null");
 		if (methodArgument.Length < 42)
-			throw new ArgumentException(Name.Of(methodArgument), "String not long enough");
+			throw new ArgumentException("String not long enough", Name.Of(methodArgument)); // Yep, ArgumentException's constructor arguments are in the opposite order of ArgumentNullException's constructor arguments.
 		DoSomething();
     }
 
