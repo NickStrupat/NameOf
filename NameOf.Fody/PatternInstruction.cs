@@ -21,9 +21,10 @@ namespace NameOf.Fody {
         private static String NameOf<T>(Expression<Func<T>> expression) {
             if (expression == null)
                 throw new ArgumentNullException(NameOf(() => expression));
-            var body = expression.Body as MemberExpression;
+            var unaryExpression = expression.Body as UnaryExpression;
+            var body = (unaryExpression != null ? unaryExpression.Operand : expression.Body) as MemberExpression;
             if (body == null)
-                throw new ArgumentException(NameOf(() => expression));
+                throw new ArgumentException(String.Format("'{0}' should be a member expression", NameOf(() => expression)));
             return body.Member.Name;
         }
         private static Boolean PredicateDummy(Instruction instruction, ILProcessor ilProcessor) { return true; }
