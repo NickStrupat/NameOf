@@ -21,6 +21,7 @@ namespace AssemblyToProcess {
         public static Nullable<Single> StaticClassNullableTypeMethod() { return 12.45f; }
         public static Boolean StaticClassSystemValueTypeMethod() { return true; }
         public static String StaticClassSystemReferenceTypeMethod() { return "static class"; }
+        public static String StaticClassSystemReferenceTypeMethod(Object overload, Int32 otherOverload, Invocations.Struct @struct) { return "static class"; }
         public static Abc StaticClassValueTypeMethod() { return new Abc(); }
         public static Def StaticClassReferenceTypeMethod() { return new Def(); }
         public static Abc StaticClassValueTypeGenericMethod<T>() where T : struct { return new Abc(); }

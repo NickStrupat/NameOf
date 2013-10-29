@@ -355,7 +355,7 @@ namespace AssemblyToProcess {
 
             Assert.AreEqual(Name.Of<InstanceClass, Nullable<Single>>(x => x.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Boolean>(x => x.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
-            Assert.AreEqual(Name.Of<InstanceClass, String>(x => x.InstanceClassSystemReferenceTypeMethod), "InstanceClassSystemReferenceTypeMethod");
+            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeMethod(default(Object))), "InstanceClassSystemReferenceTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Abc>(x => x.InstanceClassValueTypeMethod), "InstanceClassValueTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Def>(x => x.InstanceClassReferenceTypeMethod), "InstanceClassReferenceTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Abc>(x => x.InstanceClassValueTypeGenericMethod<V>), "InstanceClassValueTypeGenericMethod");
@@ -398,6 +398,10 @@ namespace AssemblyToProcess {
                 // nop 
                 // ret 
         }
+        public struct Struct {
+            private Object @object;
+            private Int32 int32;
+        }
         public static void Instance() {
             var instanceClass = new InstanceClass();
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
@@ -418,7 +422,23 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassDelegateProperty), "InstanceClassDelegateProperty");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
-            Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethod), "InstanceClassSystemReferenceTypeMethod");
+            Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethod(default(Object))), "InstanceClassSystemReferenceTypeMethod");
+            // ldloc.0 
+            // ldfld class AssemblyToProcess.InstanceClass AssemblyToProcess.Invocations/<>c__DisplayClass43::instanceClass
+            // callvirt instance string AssemblyToProcess.InstanceClass::InstanceClassSystemReferenceTypeMethod()
+            // call string [Name.Of]Name::Of(object)
+
+            //Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethod(default(Object), default(Int32), default(Struct))), "InstanceClassSystemReferenceTypeMethod");
+            // ldloc.0 
+            // ldfld class AssemblyToProcess.InstanceClass AssemblyToProcess.Invocations/<>c__DisplayClass43::instanceClass
+            // ldnull 
+            // ldc.i4.0 
+            // ldloca.s CS$0$0000
+            // initobj AssemblyToProcess.Invocations/Struct
+            // ldloc.1 
+            // callvirt instance string AssemblyToProcess.InstanceClass::InstanceClassSystemReferenceTypeMethod(object, int32, valuetype AssemblyToProcess.Invocations/Struct)
+            // call string [Name.Of]Name::Of(object)
+
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassValueTypeMethod), "InstanceClassValueTypeMethod");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassReferenceTypeMethod), "InstanceClassReferenceTypeMethod");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassValueTypeGenericMethod<V>), "InstanceClassValueTypeGenericMethod");
