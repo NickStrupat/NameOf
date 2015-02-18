@@ -355,7 +355,9 @@ namespace AssemblyToProcess {
 
             Assert.AreEqual(Name.Of<InstanceClass, Nullable<Single>>(x => x.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Boolean>(x => x.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
-            Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeMethod(default(Object))), "InstanceClassSystemReferenceTypeMethod");
+			Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeMethod()), "InstanceClassSystemReferenceTypeMethod");
+			Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeMethodWithParameters(default(Object))), "InstanceClassSystemReferenceTypeMethodWithParameters");
+			//Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassSystemReferenceTypeMethodWithParameters(default(Object), default(Int32), default(Struct))), "InstanceClassSystemReferenceTypeMethodWithParameters");
             Assert.AreEqual(Name.Of<InstanceClass, Abc>(x => x.InstanceClassValueTypeMethod), "InstanceClassValueTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Def>(x => x.InstanceClassReferenceTypeMethod), "InstanceClassReferenceTypeMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Abc>(x => x.InstanceClassValueTypeGenericMethod<V>), "InstanceClassValueTypeGenericMethod");
@@ -422,8 +424,11 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassDelegateProperty), "InstanceClassDelegateProperty");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
-            Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethod(default(Object))), "InstanceClassSystemReferenceTypeMethod");
-            // ldloc.0 
+			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethod()), "InstanceClassSystemReferenceTypeMethod");
+			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethodWithParameters(default(Object))), "InstanceClassSystemReferenceTypeMethodWithParameters");
+			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethodWithParameters(default(Object), default(Int32), default(Int64), default(Boolean), default(Struct), default(Struct))), "InstanceClassSystemReferenceTypeMethodWithParameters");
+            
+			// ldloc.0 
             // ldfld class AssemblyToProcess.InstanceClass AssemblyToProcess.Invocations/<>c__DisplayClass43::instanceClass
             // callvirt instance string AssemblyToProcess.InstanceClass::InstanceClassSystemReferenceTypeMethod()
             // call string [Name.Of]Name::Of(object)
@@ -454,21 +459,21 @@ namespace AssemblyToProcess {
             Assert.Fail("This use is not supported");
         }
         public static void Errors() {
-            //try {
-            //    Name.Of(false);
-            //    AssertFail();
-            //}
-            //catch (NotSupportedException) { }
-            //try {
-            //    Name.Of(() => false);
-            //    AssertFail();
-            //}
-            //catch (NotSupportedException) { }
-            //try {
-            //    Name.Of<InstanceClass>((x, y) => x.InstanceClassEvent += (s, e) => { });
-            //    AssertFail();
-            //}
-            //catch (NotSupportedException) { }
+			//try {
+			//	Name.Of(false);
+			//	AssertFail();
+			//}
+			//catch (NotImplementedException) { }
+			//try {
+			//	Name.Of(() => false);
+			//	AssertFail();
+			//}
+			//catch (NotImplementedException) { }
+			//try {
+			//	Name.Of<InstanceClass>((x, y) => x.InstanceClassEvent += (s, e) => { });
+			//	AssertFail();
+			//}
+			//catch (NotImplementedException) { }
         }
     }
 }

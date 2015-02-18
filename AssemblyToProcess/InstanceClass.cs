@@ -19,9 +19,10 @@ namespace AssemblyToProcess {
         public Func<Object> InstanceClassReferenceTypeDelegateProperty { get; set; }
         public Action InstanceClassDelegateProperty { get; set; }
         public Nullable<Single> InstanceClassNullableTypeMethod() { return 12.45f; }
-        public Boolean InstanceClassSystemValueTypeMethod() { return true; }
-        public String InstanceClassSystemReferenceTypeMethod(Object overload) { return "Instance class"; }
-        public String InstanceClassSystemReferenceTypeMethod(Object overload, Int32 otherOverload, Invocations.Struct @struct) { return "Instance class"; }
+		public Boolean InstanceClassSystemValueTypeMethod() { return true; }
+		public String InstanceClassSystemReferenceTypeMethod() { return "Instance class"; }
+        public String InstanceClassSystemReferenceTypeMethodWithParameters(Object overload) { return "Instance class"; }
+		public String InstanceClassSystemReferenceTypeMethodWithParameters(Object overload, Int32 otherOverload, Int64 Int64, Boolean boolean, Invocations.Struct @struct, Invocations.Struct @struct2) { return "Instance class"; }
         public Abc InstanceClassValueTypeMethod() { return new Abc(); }
         public Def InstanceClassReferenceTypeMethod() { return new Def(); }
         public Abc InstanceClassValueTypeGenericMethod<T>() where T : struct { return new Abc(); }

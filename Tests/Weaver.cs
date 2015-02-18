@@ -10,8 +10,9 @@ namespace Tests {
     public class Weaver {
         [TestMethod]
         public void ActualWeaving() {
-            var projectPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\AssemblyToProcess\AssemblyToProcess.csproj"));
-            var assemblyPath = Path.Combine(Path.GetDirectoryName(projectPath), @"bin\Debug\AssemblyToProcess.dll");
+            //var projectPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\..\..\AssemblyToProcess\AssemblyToProcess.csproj"));
+            //var assemblyPath = Path.Combine(Path.GetDirectoryName(projectPath), @"bin\Debug\AssemblyToProcess.dll");
+			var assemblyPath = @"AssemblyToProcess.dll";
 #if (!DEBUG)
             assemblyPath = assemblyPath.Replace("Debug", "Release");
 #endif
@@ -51,9 +52,9 @@ namespace Tests {
         public void Instances() {
             Invocations.Instance();
         }
-        [TestMethod]
-        public void Errors() {
-            Invocations.Errors();
-        }
+		//[TestMethod]
+		//public void Errors() {
+		//	Invocations.Errors();
+		//}
     }
 }

@@ -31,6 +31,7 @@ namespace NameOf.Fody {
                 if (nameOfCallInstruction != null)
                     throw GetNotSupportedException(nameOfCallInstruction); // The usage of Name.Of is not supported
             }
+	        var whaaaaaat = allMethods.Where(x => x.Body.Instructions.Any(IsNameOfCallInstruction));
             // Remove Name.Of reference
             var nameOfAssemblyReference = ModuleDefinition.AssemblyReferences.SingleOrDefault(x => x.FullName == typeof(Name).Assembly.FullName);
             ModuleDefinition.AssemblyReferences.Remove(nameOfAssemblyReference);
@@ -111,6 +112,9 @@ namespace NameOf.Fody {
             PotentiallyUnusedMethodDefinitions.Add(anonymousMethodCallInstruction.Operand as MethodDefinition);
             return name;
         }
+		//private static IEnumerable<PatternInstruction[]> PatternsReversedAndOrderedByPatternLength = from nameOfCallPattern in nameOfCallPatterns
+		//																							 orderby nameOfCallPattern.Length descending
+		//																							 select nameOfCallPattern.Reverse().ToArray();
         private static void ProcessNameOfCallInstruction(Instruction instruction, ILProcessor ilProcessor) {
             var patterns = from nameOfCallPattern in nameOfCallPatterns
                            orderby nameOfCallPattern.Length descending
