@@ -3,6 +3,10 @@
 public struct V {}
 public class R {}
 public static class Name {
+	static Name() {
+		throw GetNotImplementedException();
+	}
+
     private static NotImplementedException GetNotImplementedException() { return new NotImplementedException("This is just a stub to be removed at build when processed by Fody."); }
     public static String Of<T>() { throw GetNotImplementedException(); }
     public static String Of(Object @object) { throw GetNotImplementedException(); }

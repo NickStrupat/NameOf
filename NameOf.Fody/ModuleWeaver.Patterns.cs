@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -39,6 +40,7 @@ namespace NameOf.Fody {
                 new PatternInstruction(LoadOpCodes),
                 new PatternInstruction(OpCodes.Ldfld),
                 new OptionalPatternInstruction(OpCodes.Ldnull),
+                //new OptionalPatternInstructionSequences(new [] {OpCodes.Ldnull}, new [] {OpCodes.Ldc_I4_0}, new [] {OpCodes.Ldc_I4_0, OpCodes.Conv_I8}),
                 new PatternInstruction(CallOpCodes, (i, p) => ((MethodDefinition)i.Operand).Name, (i, p) => !((MethodDefinition)i.Operand).IsGetter),
                 new OptionalPatternInstruction(OpCodes.Box),
                 new NameOfPatternInstruction(),
@@ -189,12 +191,36 @@ namespace NameOf.Fody {
             new [] { // Method calls
                 new PatternInstruction(OpCodes.Ldarg_0),
                 new OptionalPatternInstruction(OpCodes.Ldnull),
-                new PatternInstruction(CallOpCodes, (i, p) => ((MethodReference)i.Operand).Name),
+                new PatternInstruction(CallOpCodes, (i, p) => ((MethodReference)i.Operand).Name, (i, p) => !((MethodDefinition)i.Operand).IsGetter && !((MethodDefinition)i.Operand).IsAddOn && !((MethodDefinition)i.Operand).IsRemoveOn),
                 new OptionalPatternInstruction(OpCodes.Stloc_0),
                 new OptionalPatternInstruction(OpCodes.Br_S),
                 new OptionalPatternInstruction(OpCodes.Ldloc_0),
                 new PatternInstruction(OpCodes.Ret),
             }, 
         };
+
+		//private static PatternInstruction[][] defaultKeywordPatterns = {
+		//	new [] {
+		//		new PatternInstruction(OpCodes.Ldnull),
+		//	},
+		//	new [] {
+		//		new PatternInstruction(OpCodes.Ldc_I4_0),
+		//	},
+		//	new [] {
+		//		new PatternInstruction(OpCodes.Ldloca_S),
+		//		new PatternInstruction(OpCodes.Initobj),
+		//		new PatternInstruction(new [] {OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3, OpCodes.Ldloc_S}),
+		//	},
+		//	new [] {
+		//		new PatternInstruction(OpCodes.Ldc_I4_0),
+		//		new PatternInstruction(OpCodes.Newobj, null, (i, p) => ((MethodReference)i.Operand) != null/* == typeof(Decimal).GetConstructor(new [] {typeof(Int32)})*/),
+		//	},
+		//	new [] {
+		//		new PatternInstruction(OpCodes.Ldc_R8, null, (i, p) => i.Operand == 0),
+		//	},
+		//	new [] {
+			    
+		//	},
+		//};
     }
 }

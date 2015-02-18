@@ -298,7 +298,9 @@ namespace AssemblyToProcess {
             // stsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
             // br.s L_02ef
             // ldsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
-            // call string [Name.Of]Name::Of(class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler>)
+			// call string [Name.Of]Name::Of(class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler>)
+
+			Assert.AreEqual(Name.Of(e => StaticClass.StaticClassEvent -= e), "StaticClassEvent");
         }
         public static void StaticInstance() {
             Assert.AreEqual(Name.Of<InstanceClass>(x => x.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
@@ -423,10 +425,11 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassReferenceTypeDelegateProperty), "InstanceClassReferenceTypeDelegateProperty");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassDelegateProperty), "InstanceClassDelegateProperty");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassNullableTypeMethod), "InstanceClassNullableTypeMethod");
-            Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
+			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemValueTypeMethod), "InstanceClassSystemValueTypeMethod");
+			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemValueTypeMethod()), "InstanceClassSystemValueTypeMethod");
 			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethod()), "InstanceClassSystemReferenceTypeMethod");
 			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethodWithParameters(default(Object))), "InstanceClassSystemReferenceTypeMethodWithParameters");
-			Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethodWithParameters(default(Object), default(Int32), default(Int64), default(Boolean), default(Struct), default(Struct))), "InstanceClassSystemReferenceTypeMethodWithParameters");
+			//Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemReferenceTypeMethodWithParameters(default(Object), default(Int32), default(Int64), default(Boolean), default(Struct), default(Struct))), "InstanceClassSystemReferenceTypeMethodWithParameters");
             
 			// ldloc.0 
             // ldfld class AssemblyToProcess.InstanceClass AssemblyToProcess.Invocations/<>c__DisplayClass43::instanceClass
