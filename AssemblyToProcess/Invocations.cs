@@ -36,11 +36,11 @@ namespace AssemblyToProcess {
             // newobj instance void [mscorlib]System.Func`1<object>::.ctor(object, native int)
             // call string [Name.Of]Name::Of<object>(class [mscorlib]System.Func`1<!!0>)
 
-            Assert.AreEqual(Name.OfVoidMethod(VoidMethod), "VoidMethod");
+            Assert.AreEqual(Name.OfVoid(VoidMethod), "VoidMethod");
             // ldnull 
             // ldftn void AssemblyToProcess.Invocations::VoidMethod()
             // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
-            // call string [Name.Of]Name::OfVoidMethod(class [mscorlib]System.Action)
+            // call string [Name.Of]Name::OfVoid(class [mscorlib]System.Action)
 
             Assert.AreEqual(Name.Of(valueTypeField), "valueTypeField");
             // ldsfld bool AssemblyToProcess.Invocations::valueTypeField
@@ -277,17 +277,17 @@ namespace AssemblyToProcess {
             // newobj instance void [mscorlib]System.Func`1<class [mscorlib]System.Action>::.ctor(object, native int)
             // call string [Name.Of]Name::Of<class [mscorlib]System.Action>(class [mscorlib]System.Func`1<!!0>)
 
-            Assert.AreEqual(Name.OfVoidMethod(StaticClass.StaticClassVoidMethod), "StaticClassVoidMethod");
+            Assert.AreEqual(Name.OfVoid(StaticClass.StaticClassVoidMethod), "StaticClassVoidMethod");
             // ldnull 
             // ldftn void AssemblyToProcess.StaticClass::StaticClassVoidMethod()
             // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
-            // call string [Name.Of]Name::OfVoidMethod(class [mscorlib]System.Action)
+            // call string [Name.Of]Name::OfVoid(class [mscorlib]System.Action)
 
-            Assert.AreEqual(Name.OfVoidMethod(StaticClass.StaticClassVoidGenericMethod<R>), "StaticClassVoidGenericMethod");
+            Assert.AreEqual(Name.OfVoid(StaticClass.StaticClassVoidGenericMethod<R>), "StaticClassVoidGenericMethod");
             // ldnull 
             // ldftn void AssemblyToProcess.StaticClass::StaticClassVoidGenericMethod<class [Name.Of]R>()
             // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
-            // call string [Name.Of]Name::OfVoidMethod(class [mscorlib]System.Action)
+            // call string [Name.Of]Name::OfVoid(class [mscorlib]System.Action)
 
             Assert.AreEqual(Name.Of(e => StaticClass.StaticClassEvent += e), "StaticClassEvent");
             // ldsfld class [mscorlib]System.Action`1<class [mscorlib]System.EventHandler> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate7
@@ -367,8 +367,8 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of<InstanceClass, Func<Int32>>(x => x.InstanceClassValueTypeDelegateMethod), "InstanceClassValueTypeDelegateMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Func<Object>>(x => x.InstanceClassReferenceTypeDelegateMethod), "InstanceClassReferenceTypeDelegateMethod");
             Assert.AreEqual(Name.Of<InstanceClass, Action>(x => x.InstanceClassDelegateMethod), "InstanceClassDelegateMethod");
-            Assert.AreEqual(Name.OfVoidMethod<InstanceClass>(x => x.InstanceClassVoidMethod), "InstanceClassVoidMethod");
-            Assert.AreEqual(Name.OfVoidMethod<InstanceClass>(x => x.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
+            Assert.AreEqual(Name.OfVoid<InstanceClass>(x => x.InstanceClassVoidMethod), "InstanceClassVoidMethod");
+            Assert.AreEqual(Name.OfVoid<InstanceClass>(x => x.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
             // ldsfld class [mscorlib]System.Func`2<class AssemblyToProcess.InstanceClass, class [mscorlib]System.Func`1<valuetype [mscorlib]System.Nullable`1<float32>>> AssemblyToProcess.Invocations::CS$<>9__CachedAnonymousMethodDelegate35
             // brtrue.s L_030b
             // ldnull 
@@ -454,8 +454,8 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassValueTypeDelegateMethod), "InstanceClassValueTypeDelegateMethod");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassReferenceTypeDelegateMethod), "InstanceClassReferenceTypeDelegateMethod");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassDelegateMethod), "InstanceClassDelegateMethod");
-            Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidMethod), "InstanceClassVoidMethod");
-            Assert.AreEqual(Name.OfVoidMethod(instanceClass.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
+            Assert.AreEqual(Name.OfVoid(instanceClass.InstanceClassVoidMethod), "InstanceClassVoidMethod");
+            Assert.AreEqual(Name.OfVoid(instanceClass.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
             Assert.AreEqual(Name.Of(e => instanceClass.InstanceClassEvent += e), "InstanceClassEvent");
         }
         private static void AssertFail() {
