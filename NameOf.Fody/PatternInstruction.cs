@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using Mono.Cecil.Cil;
 
 namespace NameOf.Fody {
@@ -18,21 +17,12 @@ namespace NameOf.Fody {
                 return false;
             }
         }
-        private static String NameOf<T>(Expression<Func<T>> expression) {
-            if (expression == null)
-                throw new ArgumentNullException(NameOf(() => expression));
-            var unaryExpression = expression.Body as UnaryExpression;
-            var body = (unaryExpression != null ? unaryExpression.Operand : expression.Body) as MemberExpression;
-            if (body == null)
-                throw new ArgumentException(String.Format("'{0}' should be a member expression", NameOf(() => expression)));
-            return body.Member.Name;
-        }
         private static Boolean PredicateDummy(Instruction instruction, ILProcessor ilProcessor) { return true; }
         public PatternInstruction(OpCode[] eligibleOpCodes, Terminal terminal = null, Predicate predicate = null) {
             if (eligibleOpCodes == null)
-                throw new ArgumentNullException(NameOf(() => eligibleOpCodes)); // I know... this is ironic. It would be ideal to have the project use its own Name.Of, but I haven't put in the time to make sure that works.
+                throw new ArgumentNullException(Name.Of(eligibleOpCodes));
             if (eligibleOpCodes.Length == 0)
-                throw new ArgumentException(NameOf(() => eligibleOpCodes));
+                throw new ArgumentException("Array length must be greater than zero", Name.Of(eligibleOpCodes));
             EligibleOpCodes = eligibleOpCodes;
             Terminal = terminal;
             this.predicate = predicate ?? PredicateDummy;
