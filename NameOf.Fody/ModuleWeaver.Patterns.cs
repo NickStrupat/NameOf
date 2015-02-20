@@ -18,6 +18,12 @@ namespace NameOf.Fody {
             },
 		    new [] {
                 new PatternInstruction(LoadOpCodes),
+                new PatternInstruction(OpCodes.Ldfld, (i, p) => ((FieldReference)i.Operand).Name),
+                new OptionalPatternInstruction(OpCodes.Box),
+                new NameOfPatternInstruction(),
+            },
+		    new [] {
+                new PatternInstruction(LoadOpCodes),
                 new PatternInstruction(OpCodes.Ldfld),
                 new PatternInstruction(CallOpCodes, (i, p) => ((MethodDefinition)i.Operand).Name.Substring(4), (i, p) => ((MethodDefinition)i.Operand).IsGetter),
                 new OptionalPatternInstruction(OpCodes.Box),
@@ -40,7 +46,6 @@ namespace NameOf.Fody {
                 new PatternInstruction(LoadOpCodes),
                 new PatternInstruction(OpCodes.Ldfld),
                 new OptionalPatternInstruction(OpCodes.Ldnull),
-                //new OptionalPatternInstructionSequences(new [] {OpCodes.Ldnull}, new [] {OpCodes.Ldc_I4_0}, new [] {OpCodes.Ldc_I4_0, OpCodes.Conv_I8}),
                 new PatternInstruction(CallOpCodes, (i, p) => ((MethodDefinition)i.Operand).Name, (i, p) => !((MethodDefinition)i.Operand).IsGetter),
                 new OptionalPatternInstruction(OpCodes.Box),
                 new NameOfPatternInstruction(),
