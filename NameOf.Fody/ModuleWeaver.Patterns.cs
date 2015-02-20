@@ -131,17 +131,17 @@ namespace NameOf.Fody {
                 new NameOfPatternInstruction(),
             },
             new [] {
-                new PatternInstruction(OpCodes.Ldarg_1, (i, p) => p.Body.Method.Parameters[1].Name),
+                new PatternInstruction(OpCodes.Ldarg_1, (i, p) => p.Body.Method.Parameters[1 - (p.Body.Method.IsStatic ? 0 : 1)].Name),
                 new OptionalPatternInstruction(OpCodes.Box),
                 new NameOfPatternInstruction(),
             },
             new [] {
-                new PatternInstruction(OpCodes.Ldarg_2, (i, p) => p.Body.Method.Parameters[2].Name),
+                new PatternInstruction(OpCodes.Ldarg_2, (i, p) => p.Body.Method.Parameters[2 - (p.Body.Method.IsStatic ? 0 : 1)].Name),
                 new OptionalPatternInstruction(OpCodes.Box),
                 new NameOfPatternInstruction(),
             },
             new [] {
-                new PatternInstruction(OpCodes.Ldarg_3, (i, p) => p.Body.Method.Parameters[3].Name),
+                new PatternInstruction(OpCodes.Ldarg_3, (i, p) => p.Body.Method.Parameters[3 - (p.Body.Method.IsStatic ? 0 : 1)].Name),
                 new OptionalPatternInstruction(OpCodes.Box),
                 new NameOfPatternInstruction(),
             },

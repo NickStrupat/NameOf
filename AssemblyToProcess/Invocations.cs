@@ -406,7 +406,15 @@ namespace AssemblyToProcess {
             private Object @object;
             private Int32 int32;
         }
+
+	    public class MyObject {
+			public MyObject(Int32 i, Boolean b) {
+				Assert.AreEqual(Name.Of(i), "i");
+				Assert.AreEqual(Name.Of(b), "b");
+		    }
+	    }
         public static void Instance() {
+	        var myObject = new MyObject(0, false);
             var instanceClass = new InstanceClass();
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassNullableTypeField), "InstanceClassNullableTypeField");
             Assert.AreEqual(Name.Of(instanceClass.InstanceClassSystemValueTypeField), "InstanceClassSystemValueTypeField");
