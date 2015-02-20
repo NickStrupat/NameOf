@@ -1,6 +1,8 @@
 NameOf
 ======
 
+NuGet package available at https://www.nuget.org/packages/NameOf.Fody/
+
 Provides strongly typed access to a compile-time string representing the name of a variable, field, property, method, event, enum value, or type.
 
 Other approaches require reflection or traversing the expression tree of a lamdba, each with hits at run-time and less-than-ideal syntax.
@@ -11,9 +13,18 @@ Reference to the `Name.Of...` dummy methods and assembly is removed. Any anonymo
 
 ## Usage
 
-#### PropertyChanged events (check out [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged))
+#### PropertyChanged events (check out [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged) for an automatic solution)
 
-    RaisePropertyChanged(Name.Of(FooProperty));
+    private String displayText;
+	public String DisplayText {
+	    get { return displayText; }
+		set {
+		    if (value == displayText)
+			    return;
+			displayText = value;
+			RaisePropertyChanged(Name.Of(DisplayText));
+		}
+	}
 
 #### ArgumentException throw with argument name
 
