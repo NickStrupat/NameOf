@@ -52,6 +52,10 @@ namespace Tests {
         public void Instances() {
             Invocations.Instance();
         }
+		[TestMethod]
+		public void AsyncAwait() {
+			Invocations.AsyncAwait();
+		}
 		//[TestMethod]
 		//public void Errors() {
 		//	Invocations.Errors();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AssemblyToProcess {
@@ -466,6 +467,16 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.OfVoid(instanceClass.InstanceClassVoidGenericMethod<R>), "InstanceClassVoidGenericMethod");
             Assert.AreEqual(Name.Of(e => instanceClass.InstanceClassEvent += e), "InstanceClassEvent");
         }
+
+		public static async Task Async(Boolean b) {
+		    var local = 42;
+			Assert.AreEqual(Name.Of(local), "local");
+			Assert.AreEqual(Name.Of(b), "b");
+		    await Task.Delay(1);
+	    }
+	    public static void AsyncAwait() {
+		     Async(false).Wait();
+	    }
         private static void AssertFail() {
             Assert.Fail("This use is not supported");
         }

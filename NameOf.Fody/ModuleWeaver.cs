@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -31,7 +32,6 @@ namespace NameOf.Fody {
                 if (nameOfCallInstruction != null)
                     throw GetNotSupportedException(nameOfCallInstruction); // The usage of Name.Of is not supported
             }
-	        var whaaaaaat = allMethods.Where(x => x.Body.Instructions.Any(IsNameOfCallInstruction));
             // Remove Name.Of reference
             var nameOfAssemblyReference = ModuleDefinition.AssemblyReferences.SingleOrDefault(x => x.FullName == typeof(Name).Assembly.FullName);
             ModuleDefinition.AssemblyReferences.Remove(nameOfAssemblyReference);
@@ -112,6 +112,15 @@ namespace NameOf.Fody {
             PotentiallyUnusedMethodDefinitions.Add(anonymousMethodCallInstruction.Operand as MethodDefinition);
             return name;
         }
+
+		private static String GetNameFromAsyncAwaitLocal(Instruction i, ILProcessor p) {
+			var operand = ((FieldReference)i.Operand).Name;
+			var matchGroup = Regex.Match(operand, "<(?<name>[^>]+)>").Groups["name"];
+			if (matchGroup.Success)
+				return matchGroup.Value;
+			return operand;
+		}
+
 		//private static IEnumerable<PatternInstruction[]> PatternsReversedAndOrderedByPatternLength = from nameOfCallPattern in nameOfCallPatterns
 		//																							 orderby nameOfCallPattern.Length descending
 		//																							 select nameOfCallPattern.Reverse().ToArray();
