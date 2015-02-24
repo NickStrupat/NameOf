@@ -11,7 +11,7 @@
     <AssemblyName>NameOf.Fody</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>bbac00cf</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>013b9b2e</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,9 +35,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Lib\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
-    <Reference Include="Name.Of, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NameOf.Fody.0.4.0-prerelease\lib\Name.Of.dll</HintPath>
+    <Reference Include="Name.Of">
+      <HintPath>..\packages\NameOf.Fody.0.4.4-prerelease\lib\Name.Of.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
