@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AssemblyToProcess {
     public static class Invocations {
-        private static void VoidMethod() {}
+		private static void VoidMethod() { }
         private static Object Method() { return null; }
         private static Boolean valueTypeField;
         private static String referenceTypeField;
@@ -41,7 +41,7 @@ namespace AssemblyToProcess {
             // ldnull 
             // ldftn void AssemblyToProcess.Invocations::VoidMethod()
             // newobj instance void [mscorlib]System.Action::.ctor(object, native int)
-            // call string [Name.Of]Name::OfVoid(class [mscorlib]System.Action)
+			// call string [Name.Of]Name::OfVoid(class [mscorlib]System.Action)
 
             Assert.AreEqual(Name.Of(valueTypeField), "valueTypeField");
             // ldsfld bool AssemblyToProcess.Invocations::valueTypeField
@@ -61,6 +61,8 @@ namespace AssemblyToProcess {
             Assert.AreEqual(Name.Of(ReferenceTypeProperty), "ReferenceTypeProperty");
             // call string AssemblyToProcess.Invocations::get_ReferenceTypeProperty()
             // call string [Name.Of]Name::Of(object)
+
+	        new InstanceClass().Run();
         }
         public static void Local() {
             var anonymousType = new { property = true };

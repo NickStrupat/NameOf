@@ -56,6 +56,10 @@ namespace Tests {
 		public void AsyncAwait() {
 			Invocations.AsyncAwait();
 		}
+		[TestMethod]
+		public void Member() {
+			Invocations.Member();
+		}
 		//[TestMethod]
 		//public void Errors() {
 		//	Invocations.Errors();
