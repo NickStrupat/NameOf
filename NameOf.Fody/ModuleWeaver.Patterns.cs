@@ -45,12 +45,12 @@ namespace NameOf.Fody {
             },
 		    new [] {
                 new PatternInstruction(LoadOpCodes),
-                new PatternInstruction(OpCodes.Ldftn, GetNameFromAnonymousMethod),
+                new PatternInstruction(OpCodes.Ldftn, GetNameFromAnonymousMethod, (i, p) => ((MethodReference)i.Operand).Name.Contains('<')),
                 new OptionalPatternInstruction(OpCodes.Newobj),
                 new NameOfPatternInstruction(),
             },
 		    new [] {
-                new PatternInstruction(OpCodes.Ldarg_0), 
+                new PatternInstruction(LoadOpCodes.Concat(LoadArgumentObjectOpCodes).ToArray()), 
                 new PatternInstruction(OpCodes.Ldftn, (i, p) => ((MethodReference)i.Operand).Name, (i, p) => !((MethodReference)i.Operand).Name.Contains('<')),
                 new PatternInstruction(OpCodes.Newobj),
                 new NameOfPatternInstruction(),

@@ -68,6 +68,9 @@ namespace NameOf.Fody {
         private static readonly OpCode[] CallOpCodes = { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt };
         private static readonly OpCode[] LoadFieldOpCodes = { OpCodes.Ldfld, OpCodes.Ldsfld, OpCodes.Ldflda, OpCodes.Ldsflda };
         private static readonly OpCode[] LoadOpCodes = LoadFieldOpCodes.Concat(new[] { OpCodes.Ldloc, OpCodes.Ldloc_S, OpCodes.Ldloca, OpCodes.Ldloca_S, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3 }).ToArray();
+		private static readonly OpCode[] LoadLocalObjectOpCodes = { OpCodes.Ldloc, OpCodes.Ldloc_S, OpCodes.Ldloca, OpCodes.Ldloca_S, OpCodes.Ldloc_0, OpCodes.Ldloc_1, OpCodes.Ldloc_2, OpCodes.Ldloc_3 };
+		private static readonly OpCode[] LoadArgumentObjectOpCodes = { OpCodes.Ldarg, OpCodes.Ldarg_S, OpCodes.Ldarga, OpCodes.Ldarga_S, OpCodes.Ldarg_0, OpCodes.Ldarg_1, OpCodes.Ldarg_2, OpCodes.Ldarg_3 };
+	    private static readonly OpCode[] LoadObjectOpCodes = LoadLocalObjectOpCodes.Concat(LoadArgumentObjectOpCodes).ToArray();
         private static readonly MethodInfo GetTypeFromHandleMethodInfo = new Func<RuntimeTypeHandle, Object>(Type.GetTypeFromHandle).Method;
         private static readonly String GetTypeFromHandleMethodSignature = String.Format("{0} {1}::{2}(", GetTypeFromHandleMethodInfo.ReturnType, GetTypeFromHandleMethodInfo.DeclaringType, GetTypeFromHandleMethodInfo.Name);
 

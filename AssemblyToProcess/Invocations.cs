@@ -62,7 +62,9 @@ namespace AssemblyToProcess {
             // call string AssemblyToProcess.Invocations::get_ReferenceTypeProperty()
             // call string [Name.Of]Name::Of(object)
 
-	        new InstanceClass().Run();
+	        var instanceClass = new InstanceClass();
+			Assert.AreEqual(Name.OfVoid(instanceClass.Run), "Run");
+			instanceClass.Run();
         }
         public static void Local() {
             var anonymousType = new { property = true };
