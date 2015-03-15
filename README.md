@@ -13,6 +13,20 @@ Reference to the `Name.Of...` dummy methods and assembly is removed. Any anonymo
 
 ## Usage
 
+#### General purpose
+
+    String localVariableName = Name.Of(localVariable); // yields "localVariable"
+    String propertyName = Name.Of(instanceClass.Property); // yields "Property"
+    String methodName = Name.Of(StaticClass.SomeMethod); // yields "SomeMethod"
+    String fieldNameWithoutInstance = Name.Of<InstanceClass>(x => x.Field); // yields "Field"
+    String nonVoidMethodWithoutInstance = Name.Of<InstanceClass, ReturnType>(x => x.NonVoidMethod); // yields "NonVoidMethod"
+
+#### Events
+
+    String eventName = Name.Of(e => instanceClass.InstanceClassEvent += e); // yields "InstanceClassEvent"
+    String eventNameWithoutInstance = Name.Of<InstanceClass>((x,e) => x.InstanceClassEvent += e); // yields "InstanceClassEvent"
+We need to use this assign syntax because its the only way C# allows us to reference an event outside of its containing type
+
 #### PropertyChanged events (check out [PropertyChanged.Fody](https://github.com/Fody/PropertyChanged) for an automatic solution)
 
     private String displayText;
@@ -35,20 +49,6 @@ Reference to the `Name.Of...` dummy methods and assembly is removed. Any anonymo
 			throw new ArgumentException("String not long enough", Name.Of(methodArgument)); // Yep, ArgumentException's constructor arguments are in the opposite order of ArgumentNullException's constructor arguments.
 		DoSomething();
     }
-
-#### General purpose
-
-    String localVariableName = Name.Of(localVariable); // yields "localVariable"
-    String propertyName = Name.Of(instanceClass.Property); // yields "Property"
-    String methodName = Name.Of(StaticClass.SomeMethod); // yields "SomeMethod"
-    String fieldNameWithoutInstance = Name.Of<InstanceClass>(x => x.Field); // yields "Field"
-    String nonVoidMethodWithoutInstance = Name.Of<InstanceClass, ReturnType>(x => x.NonVoidMethod); // yields "NonVoidMethod"
-
-#### Events
-
-    String eventName = Name.Of(e => instanceClass.InstanceClassEvent += e); // yields "InstanceClassEvent"
-    String eventNameWithoutInstance = Name.Of<InstanceClass>((x,e) => x.InstanceClassEvent += e); // yields "InstanceClassEvent"
-We need to use this assign syntax because its the only way C# allows us to reference an event outside of its containing type
 
 #### Void methods
 
