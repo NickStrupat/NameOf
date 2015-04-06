@@ -36,7 +36,7 @@
       <HintPath>..\Lib\Cecil\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="Name.Of">
-      <HintPath>..\packages\NameOf.Fody.0.7\lib\Name.Of.dll</HintPath>
+      <HintPath>..\packages\NameOf.Fody.0.8\lib\Name.Of.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
