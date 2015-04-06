@@ -46,6 +46,7 @@
     <Compile Include="..\Name.Of\Name.Of.cs">
       <Link>Name.Of.cs</Link>
     </Compile>
+    <Compile Include="InstructionExtensions.cs" />
     <Compile Include="PatternInstruction.cs" />
     <Compile Include="ModuleWeaver.cs" />
     <Compile Include="ModuleWeaver.Patterns.cs" />
