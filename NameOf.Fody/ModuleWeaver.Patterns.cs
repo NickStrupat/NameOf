@@ -167,6 +167,12 @@ namespace NameOf.Fody {
                 new OptionalPatternInstruction(OpCodes.Box),
                 new NameOfPatternInstruction(),
             },
+		    new [] {
+                new PatternInstruction(LoadObjectOpCodes), 
+                new PatternInstruction(CallOpCodes, (i, p) => ((MethodDefinition)i.Operand).Name.Substring(4), (i, p) => ((MethodDefinition)i.Operand).IsGetter),
+                new OptionalPatternInstruction(OpCodes.Box),
+                new NameOfPatternInstruction(),
+            },
             #endregion
             #region Arguments
 		    new [] {
