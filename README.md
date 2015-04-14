@@ -1,7 +1,7 @@
 NameOf
 ======
 
-NuGet package available at https://www.nuget.org/packages/NameOf.Fody/
+NuGet package available at https://www.nuget.org/packages/NameOf.Fody/ [![NuGet Status](http://img.shields.io/nuget/v/NameOf.Fody.svg?style=flat)](https://www.nuget.org/packages/NameOf.Fody/)
 
 Provides strongly typed access to a compile-time string representing the name of a variable, field, property, method, event, enum value, or type.
 
