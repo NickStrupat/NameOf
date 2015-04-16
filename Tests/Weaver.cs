@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using AssemblyToProcess;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mono.Cecil;
