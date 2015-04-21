@@ -42,17 +42,27 @@ namespace NameOf.Fody {
 		}
 
 		private Boolean IsNotUsed(IMetadataTokenProvider methodDefinition) {
-			return !ModuleDefinition.GetTypes()
-				                    .SelectMany(x => x.Methods)
-				                    .SelectMany(x => x.Body.Instructions)
-				                    .Any(x => CallOpCodes.Contains(x.OpCode) && x.Operand == methodDefinition);
+			try {
+				return !ModuleDefinition.GetTypes()
+				                        .SelectMany(x => x.Methods)
+				                        .SelectMany(x => x.Body.Instructions)
+				                        .Any(x => CallOpCodes.Contains(x.OpCode) && x.Operand == methodDefinition);
+			}
+			catch (NullReferenceException) {
+				return true;
+			}
 		}
 
 		private Boolean IsNotUsed(FieldDefinition fieldDefinition) {
-			return !ModuleDefinition.GetTypes()
-				                    .SelectMany(x => x.Methods)
-				                    .SelectMany(x => x.Body.Instructions)
-				                    .Any(x => LoadFieldOpCodes.Contains(x.OpCode) && x.Operand == fieldDefinition);
+			try {
+				return !ModuleDefinition.GetTypes()
+				                        .SelectMany(x => x.Methods)
+				                        .SelectMany(x => x.Body.Instructions)
+				                        .Any(x => LoadFieldOpCodes.Contains(x.OpCode) && x.Operand == fieldDefinition);
+			}
+			catch (NullReferenceException) {
+				return true;
+			}
 		}
 
 		private static readonly MethodInfo NameOfMethodInfo = new Func<Object, String>(Name.Of).Method;
