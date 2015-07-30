@@ -178,7 +178,7 @@ namespace NameOf.Fody {
 			String name;
 			try {
 				name = terminal();
-				if (String.IsNullOrWhiteSpace(name))
+				if (IsNullOrWhiteSpace(name))
 					throw new Exception("Name not found.");
 			}
 			catch {
@@ -213,5 +213,11 @@ namespace NameOf.Fody {
 				return "No source line information available.";
 			return String.Format("Source: {0} - line {1}", i.SequencePoint.Document.Url, i.SequencePoint.StartLine);
 		}
-	}
+
+        public static bool IsNullOrWhiteSpace(string value)
+        {
+            if (value == null) return true;
+            return string.IsNullOrEmpty(value.Trim());
+        }
+	}    
 }
