@@ -211,7 +211,7 @@ namespace NameOf.Fody {
 				i = i.Previous;
 			if (i.SequencePoint == null)
 				return "No source line information available.";
-			return String.Format("Source: {0} - line {1}", i.SequencePoint.Document.Url, i.SequencePoint.StartLine);
+			return String.Format("Source: {0}:line {1}", i.SequencePoint.Document.Url, i.SequencePoint.StartLine);
 		}
 
         public static bool IsNullOrWhiteSpace(string value)
