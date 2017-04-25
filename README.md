@@ -1,3 +1,6 @@
+# ABANDONED: I am no longer supporting this project
+I recommend using the [`nameof`/`NameOf` operator](https://msdn.microsoft.com/en-us/library/dn986596.aspx) added to C# 6/VB 14
+
 NameOf
 ======
 
